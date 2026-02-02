@@ -68,6 +68,7 @@
         .tool-setting { display: flex; align-items: center; justify-content: space-between; font-size: 12px; margin-top: 8px; color: #ccc; }
         .tool-setting input { width: 60px; background: #222; border: 1px solid #555; color: white; padding: 2px 5px; border-radius: 3px; }
 
+        /* 分析面板样式 (修复：居中显示) */
         #analysis-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5); z-index: 1999; display: none;
@@ -543,7 +544,7 @@
             switch(type) {
                 case 'top': 
                     pos.set(0, dist, 0).add(center); 
-                    up.set(0, 0, -1); // Z is usually forward/back in Y-up, looking down Y means Z is up on screen if oriented normally
+                    up.set(0, 0, -1); 
                     break;
                 case 'bottom': 
                     pos.set(0, -dist, 0).add(center); 
@@ -620,7 +621,6 @@
             scene.add(actionMarkersGroup);
         }
 
-        // --- New Visualization: Gaze Spheres & Sequence Numbers ---
         function visualizeGazeAndSeq() {
             if (gazeSpheresGroup) scene.remove(gazeSpheresGroup);
             if (seqTextGroup) scene.remove(seqTextGroup);
@@ -630,18 +630,15 @@
             const logs = experimentConfig.logs;
             const addLog = logs.filter(l => l.a === 'mark_add');
             
-            // 1. Sequence Numbers above cones
             addLog.forEach((l, index) => {
                 const sprite = createTextSprite((index + 1).toString());
                 sprite.position.set(...l.cam.p);
-                sprite.position.y += 2.0; // Float above cone
+                sprite.position.y += 2.0; 
                 seqTextGroup.add(sprite);
             });
 
-            // 2. Hesitation Spheres (Gaze)
-            // Identify stationary periods in camera logs
             const camLogs = logs.filter(l => l.a === 'camera_move');
-            const thresholdTime = 1000; // ms
+            const thresholdTime = 1000; 
             const thresholdDist = 1.0; 
             
             for(let i=0; i<camLogs.length-1; i++) {
@@ -653,8 +650,7 @@
                     const p1 = new THREE.Vector3(...curr.cam.p);
                     const p2 = new THREE.Vector3(...next.cam.p);
                     if (p1.distanceTo(p2) < thresholdDist) {
-                        // User stayed here for dt ms
-                        const size = Math.min(dt / 2000, 3.0); // Cap size
+                        const size = Math.min(dt / 2000, 3.0); 
                         const sphere = new THREE.Mesh(
                             new THREE.SphereGeometry(size, 8, 8),
                             new THREE.MeshBasicMaterial({ color: 0x00ffff, transparent: true, opacity: 0.4 })
@@ -664,7 +660,6 @@
                     }
                 }
             }
-
             scene.add(seqTextGroup);
             scene.add(gazeSpheresGroup);
         }
@@ -1213,7 +1208,10 @@
             camera.position.set(cameraZ, cameraZ*0.5, cameraZ); camera.lookAt(0,0,0);
             orbitControls.target.set(0,0,0); arcballControls.target.set(0,0,0); currentControls.update();
             const matArray = Array.isArray(materials) ? materials : [materials];
-            matArray.forEach(m => { m.vertexColors = true; m.flatShading = false; m.side = THREE.DoubleSide; m.alphaTest = 0.5; if(m.map) { m.userData.originalMap = m.map; m.map.colorSpace = THREE.SRGBColorSpace; } });
+            matArray.forEach(m => { 
+                if(!m) return;
+                m.vertexColors = true; m.flatShading = false; m.side = THREE.DoubleSide; m.alphaTest = 0.5; if(m.map) { m.userData.originalMap = m.map; m.map.colorSpace = THREE.SRGBColorSpace; } 
+            });
             
             const count = geometry.attributes.position.count;
             const colors = []; for(let i=0; i<count; i++) colors.push(0.66, 0.66, 0.66);
@@ -1239,38 +1237,13 @@
         function exportOBJ() {
             if (!currentMesh) { alert("无模型导出"); return; }
             const loadingOverlay = document.getElementById('loading-overlay'); loadingOverlay.style.display = 'flex';
-            
-            // Build Camera Path Geometry
-            const pathLines = [];
-            let pathVertCount = 0;
-            const camLogs = experimentConfig.logs.filter(l => l.a === 'camera_move');
-            if(camLogs.length > 0) {
-                pathLines.push(`o CameraPath`);
-                camLogs.forEach(l => {
-                    const p = l.cam.p;
-                    pathLines.push(`v ${p[0]} ${p[1]} ${p[2]} 0 1 0`); 
-                });
-                pathVertCount = camLogs.length;
-            }
-
             setTimeout(() => {
                 const geo = currentMesh.geometry; const pos = geo.attributes.position; const col = geo.attributes.color;
-                const lines = ["# CogCity-QA Export with Trajectory"];
-                
-                lines.push(`o Model`);
+                const lines = ["# Export"];
                 for (let i = 0; i < pos.count; i++) lines.push(`v ${pos.getX(i)} ${pos.getY(i)} ${pos.getZ(i)} ${col.getX(i)} ${col.getY(i)} ${col.getZ(i)}`);
                 for (let i = 0; i < pos.count; i+=3) lines.push(`f ${i+1} ${i+2} ${i+3}`);
-                
-                if (pathLines.length > 0) {
-                    lines.push(...pathLines);
-                    const modelVertCount = pos.count;
-                    for(let i=0; i<camLogs.length-1; i++) {
-                        lines.push(`l ${modelVertCount + 1 + i} ${modelVertCount + 2 + i}`);
-                    }
-                }
-
                 const blob = new Blob([lines.join('\n')], {type:'text/plain'});
-                const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = "model_with_path.obj";
+                const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = "model.obj";
                 link.click(); loadingOverlay.style.display = 'none';
             }, 100);
         }
