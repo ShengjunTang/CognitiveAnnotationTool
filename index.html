@@ -770,9 +770,9 @@
             const hasBackup = materials.some(m => !!m.userData.originalMap);
             if (!hasBackup && mode !== 2) { displayMode = 2; mode = 2; }
             switch (mode) {
-                case 0: materials.forEach(m => { if (m.userData.originalMap) { m.map = m.userData.originalMap; m.needsUpdate = true; } }); if (wireMesh) wireMesh.material.opacity = 0.01; refreshColors(true); break;
-                case 1: materials.forEach(m => { if (m.userData.originalMap) { m.map = m.userData.originalMap; m.needsUpdate = true; } }); if (wireMesh) wireMesh.material.opacity = 0.2; refreshColors(true); break;
-                case 2: materials.forEach(m => { if (m.map) m.userData.originalMap = m.map; m.map = null; m.needsUpdate = true; }); if (wireMesh) wireMesh.material.opacity = 0.15; refreshColors(false); break;
+                case 0: materials.forEach(m => { if(!m) return; if (m.userData.originalMap) { m.map = m.userData.originalMap; m.needsUpdate = true; } }); if (wireMesh) wireMesh.material.opacity = 0.01; refreshColors(true); break;
+                case 1: materials.forEach(m => { if(!m) return; if (m.userData.originalMap) { m.map = m.userData.originalMap; m.needsUpdate = true; } }); if (wireMesh) wireMesh.material.opacity = 0.2; refreshColors(true); break;
+                case 2: materials.forEach(m => { if(!m) return; if (m.map) m.userData.originalMap = m.map; m.map = null; m.needsUpdate = true; }); if (wireMesh) wireMesh.material.opacity = 0.15; refreshColors(false); break;
             }
         }
 
@@ -986,7 +986,7 @@
 
         function onMouseClick(event) {
             if (hoveredFaceIndex === -1 || !currentMesh) return;
-            if (event.target.closest('#ui-layer') || event.target.closest('#bottom-bar')) return;
+            if (event.target.closest('#ui-layer') || event.target.closest('#bottom-bar') || event.target.closest('#analysis-panel')) return;
             const moveDist = Math.abs(event.clientX - mouseDownPosition.x) + Math.abs(event.clientY - mouseDownPosition.y);
             if (moveDist > 5) return;
             if (currentTool === 'point') batchMarkFaces([hoveredFaceIndex], event.shiftKey);
