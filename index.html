@@ -8,44 +8,38 @@
         body { margin: 0; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #1a1a1a; color: #fff; }
         #canvas-container { width: 100vw; height: 100vh; display: block; }
         
-        #login-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); display: flex; justify-content: center; align-items: center;
-            z-index: 2000; flex-direction: column;
-        }
-        .login-box { width: 400px; padding: 40px; background: #222; border: 1px solid #444; border-radius: 8px; text-align: center; pointer-events: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        /* 覆盖层通用样式 */
+        .overlay-panel { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000; display: none; justify-content: center; align-items: center; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
+        
+        /* 登录框 */
+        .login-box { width: 400px; padding: 40px; background: #222; border: 1px solid #444; border-radius: 8px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
         .login-input { width: 80%; padding: 10px; margin: 15px 0; background: #333; border: 1px solid #555; color: white; border-radius: 4px; font-size: 16px; }
         
-        #experiment-bar {
-            position: absolute; top: 0; left: 0; width: 100%; height: 60px;
-            background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 100; pointer-events: none;
-        }
-        .stage-indicator {
-            background: rgba(0,0,0,0.6); padding: 10px 30px; border-radius: 30px;
-            border: 1px solid #444; pointer-events: auto; display: flex; gap: 20px; align-items: center;
-        }
+        /* 报告面板 */
+        #report-box { width: 800px; max-height: 90vh; background: #1e1e1e; border: 1px solid #00d2ff; border-radius: 12px; overflow-y: auto; padding: 0; display: flex; flex-direction: column; }
+        .report-header { padding: 20px; background: #00d2ff; color: #000; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .report-content { padding: 30px; color: #ddd; line-height: 1.6; }
+        .report-section { margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 15px; }
+        .report-section h3 { color: #00d2ff; margin-bottom: 10px; }
+        .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; }
+        .stat-card { background: #2a2a2a; padding: 10px; border-radius: 5px; text-align: center; }
+        .stat-num { font-size: 24px; font-weight: bold; color: #fff; display: block; }
+        .stat-label { font-size: 12px; color: #888; }
+        .discussion-text { background: #2a2a2a; padding: 15px; border-left: 4px solid #00d2ff; font-style: italic; line-height: 1.8; }
+        
+        #experiment-bar { position: absolute; top: 0; left: 0; width: 100%; height: 60px; background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%); display: flex; justify-content: center; align-items: center; z-index: 100; pointer-events: none; }
+        .stage-indicator { background: rgba(0,0,0,0.6); padding: 10px 30px; border-radius: 30px; border: 1px solid #444; pointer-events: auto; display: flex; gap: 20px; align-items: center; }
         .stage-step { opacity: 0.3; font-weight: bold; font-size: 14px; }
         .stage-step.active { opacity: 1; color: #00d2ff; text-shadow: 0 0 10px rgba(0, 210, 255, 0.5); transform: scale(1.1); }
         
-        #ui-layer {
-            position: absolute; top: 80px; right: 20px; width: 320px;
-            background: rgba(0, 0, 0, 0.85); padding: 20px; border-radius: 8px;
-            backdrop-filter: blur(8px); border: 1px solid #444;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5); z-index: 10;
-            max-height: 85vh; overflow-y: auto;
-        }
+        #ui-layer { position: absolute; top: 80px; right: 20px; width: 320px; background: rgba(0, 0, 0, 0.85); padding: 20px; border-radius: 8px; backdrop-filter: blur(8px); border: 1px solid #444; box-shadow: 0 8px 32px rgba(0,0,0,0.5); z-index: 10; max-height: 85vh; overflow-y: auto; }
 
         h2 { margin-top: 0; font-size: 16px; color: #00d2ff; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #444; padding-bottom: 10px; margin-bottom: 15px; }
         .control-group { margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 15px; }
         .stat-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; }
         .stat-val { font-weight: bold; color: #fff; }
 
-        button.action-btn, .tool-btn {
-            width: 100%; padding: 10px; background: #2c3e50; border: 1px solid #444; color: white;
-            cursor: pointer; border-radius: 4px; transition: 0.2s; margin-top: 5px; font-weight: 500;
-        }
+        button.action-btn, .tool-btn { width: 100%; padding: 10px; background: #2c3e50; border: 1px solid #444; color: white; cursor: pointer; border-radius: 4px; transition: 0.2s; margin-top: 5px; font-weight: 500; }
         button.action-btn:hover, .tool-btn:hover { background: #34495e; border-color: #00d2ff; }
         button.action-btn:disabled { background: #444; color: #666; border-color: #444; cursor: not-allowed; }
         button.primary { background: #00d2ff; color: #000; font-weight: bold; border: none; }
@@ -53,7 +47,6 @@
         button.next-stage { background: #27ae60; color: white; font-weight: bold; border: none; margin-top: 20px; padding: 15px; }
         button.next-stage:hover { background: #2ecc71; }
         button.danger { background: #c0392b; border: none; }
-        button.danger:hover { background: #e74c3c; }
         button.outline { background: transparent; border: 1px solid #00d2ff; color: #00d2ff; }
         button.outline:hover { background: rgba(0, 210, 255, 0.1); }
         
@@ -61,46 +54,36 @@
         .tool-btn { flex: 1; margin-top: 0; font-size: 18px; color: #888; }
         .tool-btn.active { background: #00d2ff; color: #000; border-color: #00d2ff; }
         
-        /* 视角按钮网格 */
         .view-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-top: 5px; }
         .view-grid button { margin-top: 0; padding: 8px 0; font-size: 12px; }
 
         .tool-setting { display: flex; align-items: center; justify-content: space-between; font-size: 12px; margin-top: 8px; color: #ccc; }
         .tool-setting input { width: 60px; background: #222; border: 1px solid #555; color: white; padding: 2px 5px; border-radius: 3px; }
 
-        /* 分析面板样式 (修复：居中显示) */
+        /* 分析悬浮窗 (无遮罩阻挡版本) */
         #analysis-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); z-index: 1999; display: none;
-            backdrop-filter: blur(5px);
+            z-index: 1999; display: none; pointer-events: none; /* 允许点击穿透，不遮挡右侧面板 */
         }
-        #analysis-panel {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        #analysis-panel-mini { 
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
             width: 350px; background: rgba(0, 0, 0, 0.95); padding: 30px; 
             border-radius: 12px; border: 1px solid #00d2ff; 
             box-shadow: 0 0 40px rgba(0, 210, 255, 0.3); z-index: 2000;
+            pointer-events: auto; /* 面板自身允许交互 */
         }
+
         .viz-option { margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; font-size: 14px; }
         .viz-legend { display: flex; gap: 10px; font-size: 12px; margin-top: 10px; justify-content: center; }
         .legend-item { display: flex; align-items: center; gap: 5px; }
         .color-box { width: 12px; height: 12px; border-radius: 3px; }
         #close-analysis { position: absolute; top: 10px; right: 15px; cursor: pointer; font-size: 20px; color: #888; }
-        #close-analysis:hover { color: white; }
 
-        #loading-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center;
-            z-index: 999; flex-direction: column; pointer-events: auto;
-        }
+        #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 999; flex-direction: column; pointer-events: auto; }
         .spinner { width: 40px; height: 40px; border: 4px solid #333; border-top: 4px solid #00d2ff; border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        #bottom-bar {
-            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.85); padding: 10px 25px; border-radius: 50px;
-            display: flex; align-items: center; gap: 20px; border: 1px solid #444; z-index: 10;
-            backdrop-filter: blur(5px); box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
+        #bottom-bar { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.85); padding: 10px 25px; border-radius: 50px; display: flex; align-items: center; gap: 20px; border: 1px solid #444; z-index: 10; backdrop-filter: blur(5px); box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
         .slider-container { display: flex; align-items: center; gap: 10px; }
         input[type="range"] { accent-color: #00d2ff; }
         
@@ -120,108 +103,96 @@
 </head>
 <body>
 
-    <!-- 1. 登录界面 -->
-    <div id="login-overlay" class="overlay-panel">
+    <!-- 登录 -->
+    <div id="login-overlay" class="overlay-panel" style="display:flex;">
         <div class="login-box">
             <h2 style="border:none;">🧪 认知实验准备</h2>
-            <p>请输入参与者 ID 以开始记录数据。</p>
             <input type="text" id="user-id-input" class="login-input" placeholder="User ID (e.g., P01)">
-            
             <p style="text-align:left; font-size:12px; color:#888; margin-top:20px;">
-                <b>实验说明：</b><br>
-                1. 本实验分三个阶段，请按提示操作。<br>
-                2. 请尽可能准确地标记您认为的模型缺陷。<br>
-                3. 您的所有操作（视角移动、标记、撤销）都将被记录。
+                <b>实验说明：</b><br>1. 分三阶段进行标注。<br>2. 尽可能准确标记缺陷。<br>3. 全程自动记录行为。<br>
+                <b style="color:#00d2ff;">AI 特性：内置 Gemini 模型，可智能分析标注特征。</b>
             </p>
-            
             <div style="height: 10px;"></div>
             <input type="file" id="init-file-input" multiple accept=".obj,.mtl,.glb,.gltf,.png,.jpg,.jpeg" style="display:none">
             <button class="primary action-btn" id="start-experiment-btn">🚀 加载模型并开始</button>
-            <button class="action-btn" onclick="document.getElementById('init-file-input').click()">📂 选择模型文件</button>
+            <button class="action-btn" onclick="document.getElementById('init-file-input').click()">📂 选择外部模型</button>
             <button class="action-btn outline" id="demo-model-btn" style="margin-top:10px; font-size:12px;">🎲 使用内置演示模型</button>
         </div>
     </div>
 
-    <!-- 2. 实验进度条 -->
+    <!-- 报告生成面板 -->
+    <div id="report-overlay" class="overlay-panel" style="display:none; z-index: 2100;">
+        <div id="report-box">
+            <div class="report-header">
+                <span>📑 认知分析报告</span>
+                <button style="background:transparent; border:none; color:black; font-weight:bold; cursor:pointer;" onclick="document.getElementById('report-overlay').style.display='none'">关闭 [X]</button>
+            </div>
+            <div class="report-content" id="report-body">
+                <!-- 动态生成的内容 -->
+            </div>
+            <div style="padding:20px; border-top:1px solid #333; text-align:right;">
+                <button class="primary action-btn" style="width:auto;" id="export-json-btn-report" onclick="exportData()">💾 导出完整数据包</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 进度条 -->
     <div id="experiment-bar">
         <div class="stage-indicator">
-            <div class="stage-step" id="step-1">1. 纯几何观察</div>
-            <div style="color:#444">➔</div>
-            <div class="stage-step" id="step-2">2. 纹理观察</div>
-            <div style="color:#444">➔</div>
+            <div class="stage-step" id="step-1">1. 纯几何观察</div><div style="color:#444">➔</div>
+            <div class="stage-step" id="step-2">2. 纹理观察</div><div style="color:#444">➔</div>
             <div class="stage-step" id="step-3">3. 综合校验</div>
         </div>
     </div>
 
-    <div id="loading-overlay">
-        <div class="spinner"></div>
-        <div style="color:white">数据处理中...</div>
-    </div>
-    
+    <div id="loading-overlay"><div class="spinner"></div><div style="color:white; margin-top:15px;" id="loading-text">模型解析中...</div></div>
     <div id="focus-msg">🎯 视角已聚焦</div>
     <div id="brush-cursor"></div>
     <div id="canvas-container"></div>
     <div id="cursor-feedback">Face ID: --</div>
 
-    <!-- 3. 分析面板 (包含遮罩层) -->
+    <!-- 可视化控制面板 (迷你) -->
     <div id="analysis-overlay">
-        <div id="analysis-panel">
+        <div id="analysis-panel-mini">
             <div id="close-analysis">×</div>
-            <h2 style="margin-top:0">📊 数据可视化分析</h2>
-            <p style="color:#aaa; font-size:12px; margin-bottom:20px;">实验已结束。请选择可视化模式查看您的认知轨迹。</p>
-            
+            <h2 style="margin-top:0">📊 可视化控制</h2>
             <div class="control-group">
-                <div class="viz-option">
-                    <span>显示轨迹线:</span>
-                    <input type="checkbox" id="viz-traj" checked>
-                </div>
-                <div class="viz-option">
-                    <span>显示交互锚点:</span>
-                    <input type="checkbox" id="viz-markers" checked>
-                </div>
+                <div class="viz-option"><span>显示轨迹线:</span><input type="checkbox" id="viz-traj" checked></div>
+                <div class="viz-option"><span>显示交互锚点:</span><input type="checkbox" id="viz-markers" checked></div>
+                <div class="viz-option"><span>显示时序编号:</span><input type="checkbox" id="viz-seq" checked></div>
+                <div class="viz-option"><span>显示犹豫气泡:</span><input type="checkbox" id="viz-gaze" checked></div>
             </div>
-            
             <div class="control-group">
                 <p style="color:#00d2ff; font-weight:bold;">🎨 模型属性着色</p>
                 <button class="action-btn" id="viz-mode-default">🔴 默认 (红/灰)</button>
                 <button class="action-btn" id="viz-mode-stage">🌈 按发现阶段 (蓝/绿/红)</button>
                 <button class="action-btn" id="viz-mode-hesitation">⏱️ 按注视时间 (Heatmap)</button>
                 <button class="action-btn" id="viz-mode-conf">🧠 按确信度 (Heatmap)</button>
-                
                 <div id="legend-stage" class="viz-legend" style="display:none;">
                     <div class="legend-item"><div class="color-box" style="background:#0000ff"></div>S1(Geo)</div>
                     <div class="legend-item"><div class="color-box" style="background:#00ff00"></div>S2(Tex)</div>
                     <div class="legend-item"><div class="color-box" style="background:#ff0000"></div>S3(Mix)</div>
                 </div>
             </div>
-            
-            <button class="primary action-btn" id="final-export-btn">💾 导出实验数据 (JSON)</button>
+            <button class="primary action-btn" id="gen-report-btn">✨ AI 智能生成分析报告</button>
         </div>
     </div>
 
-    <!-- 4. 右侧操作面板 -->
+    <!-- 右侧操作面板 -->
     <div id="ui-layer" style="display:none;"> 
         <h2 id="stage-title">阶段 1: 纯几何标记</h2>
-        <p id="stage-desc">请仅根据几何结构（白模）标记模型缺陷。忽略纹理信息。</p>
-
+        <p id="stage-desc">请仅根据几何结构（白模）标记模型缺陷。</p>
         <div class="control-group">
             <div class="stat-row"><span>已标注面片:</span><span class="stat-val" id="count-val">0</span></div>
             <div class="stat-row"><span>当前阶段标记:</span><span class="stat-val" id="stage-count-val">0</span></div>
         </div>
-
-        <!-- 快速视角切换 -->
         <div class="control-group">
             <p style="color:#00d2ff; font-weight:bold;">🔭 快速视角</p>
             <div class="view-grid">
-                <button class="tool-btn" id="view-top" title="顶视图">Top</button>
-                <button class="tool-btn" id="view-front" title="正视图">Front</button>
-                <button class="tool-btn" id="view-right" title="右视图">Right</button>
-                <button class="tool-btn" id="view-bottom" title="底视图">Bottom</button>
-                <button class="tool-btn" id="view-back" title="后视图">Back</button>
-                <button class="tool-btn" id="view-left" title="左视图">Left</button>
+                <button class="tool-btn" id="view-top">Top</button><button class="tool-btn" id="view-front">Front</button><button class="tool-btn" id="view-right">Right</button>
+                <button class="tool-btn" id="view-bottom">Bottom</button><button class="tool-btn" id="view-back">Back</button><button class="tool-btn" id="view-left">Left</button>
             </div>
         </div>
-
         <div class="control-group">
             <p style="color:#00d2ff; font-weight:bold;">🛠️ 标注工具</p>
             <div class="tool-bar">
@@ -229,47 +200,35 @@
                 <div class="tool-btn" id="tool-brush" title="笔刷">🖌️</div>
                 <div class="tool-btn" id="tool-wand" title="魔棒">🪄</div>
             </div>
-            <!-- 参数面板 -->
             <div id="param-brush" class="tool-setting" style="display:none;">
-                <span>笔刷半径:</span> 
-                <input type="range" id="brush-size" min="0.5" max="10.0" step="0.5" value="2.0">
-                <span id="brush-size-val">2.0</span>
+                <span>笔刷半径:</span> <input type="range" id="brush-size" min="0.5" max="10.0" step="0.5" value="2.0">
             </div>
             <div id="param-wand" class="tool-setting" style="display:none;">
-                <span>法线容差(°):</span> 
-                <input type="number" id="wand-angle" min="1" max="90" value="20">
+                <span>法线容差(°):</span> <input type="number" id="wand-angle" min="1" max="90" value="20">
             </div>
-            <div style="font-size:11px; color:#888; margin-top:5px;">*按住 Shift 删除标记 (所有工具通用)</div>
+            <div style="font-size:11px; color:#888; margin-top:5px;">*按住 Shift 删除标记</div>
         </div>
-
         <div class="control-group">
             <button class="action-btn" id="undo-btn" disabled>↩️ 撤销 (Ctrl+Z)</button>
             <button class="action-btn" id="toggle-bg-btn">🎨 背景: 深色</button>
             <button class="action-btn" id="toggle-ctrl-btn">🕹️ 视角：自由 (3轴)</button>
-            <!-- 隐藏了手动切换显示模式的按钮，由实验流程强制控制 -->
-            <button class="action-btn" id="toggle-mode-btn" style="display:none">👁️ 调试: 切换显示</button>
-            <button class="action-btn" id="toggle-opacity-btn" style="display:none">💧 调试: 半透明</button>
         </div>
-        
         <div class="control-group">
              <button class="action-btn outline" id="export-obj-btn">📦 导出彩色模型 (.obj)</button>
              <button class="action-btn outline" id="export-json-btn">💾 导出: 标注数据 (.json)</button>
         </div>
-
         <button class="next-stage" id="next-stage-btn">✅ 完成本阶段，下一步</button>
-        
         <input type="file" id="file-input" multiple accept=".obj,.mtl,.glb,.gltf,.png,.jpg,.jpeg" style="display:none">
         <button class="action-btn" onclick="document.getElementById('file-input').click()" style="margin-top:10px;">📂 重新加载模型</button>
+        <button class="action-btn outline" id="btn-show-analysis" style="margin-top:5px; font-size:12px;">📊 调试: 打开分析</button>
     </div>
 
     <!-- 底部置信度条 -->
     <div id="bottom-bar" style="display:none;">
         <div class="slider-container">
-            <span>🧠 确信度:</span>
-            <span style="font-size:12px; opacity:0.7">犹豫</span>
+            <span>🧠 确信度:</span><span style="font-size:12px; opacity:0.7">犹豫</span>
             <input type="range" id="confidence-slider" min="0" max="100" value="100">
-            <span style="font-size:12px; opacity:0.7">确信</span>
-            <span id="conf-display" style="font-weight:bold; color:#00d2ff; width: 30px">100%</span>
+            <span style="font-size:12px; opacity:0.7">确信</span><span id="conf-display" style="font-weight:bold; color:#00d2ff; width: 30px">100%</span>
         </div>
     </div>
 
@@ -277,40 +236,29 @@
         import * as THREE from 'three';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
         import { ArcballControls } from 'three/addons/controls/ArcballControls.js';
-        import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
-        import { MTLLoader } from 'three/addons/loaders/MTLLoader.js'; 
         import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-        import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js'; 
+        import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+        import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
+        import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
         import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 
-        // --- 全局变量声明 ---
+        // ==========================================
+        // 1. 全局变量声明
+        // ==========================================
         let scene, camera, renderer;
         let currentControls, orbitControls, arcballControls; 
         let raycaster, mouse;
         let currentMesh = null;
-        let originalColorAttribute = null; 
         let objectURLs = [];
         let mouseDownPosition = new THREE.Vector2(); 
-
-        let trajLines = null;
-        let actionMarkersGroup = null;
-        let gazeSpheresGroup = null;
-        let seqTextGroup = null;
-
-        let hoveredFaceIndex = -1;
-        let hoverStartTime = 0;
-        let hoverInteractionCount = 0;
-        let totalMarked = 0;
         
-        let isFocusing = false;
-        let focusTargetPos = new THREE.Vector3();
-        let focusCameraPos = new THREE.Vector3();
-        let focusCameraUp = new THREE.Vector3(0, 1, 0); // For smooth transition
+        let trajLines = null, actionMarkersGroup = null, gazeSpheresGroup = null, seqTextGroup = null;
+        let hoveredFaceIndex = -1, hoverStartTime = 0, isFocusing = false;
+        let focusTargetPos = new THREE.Vector3(), focusCameraPos = new THREE.Vector3(), focusCameraUp = new THREE.Vector3(0, 1, 0); 
         
-        let displayMode = 2; // Default to Grid for Stage 1
+        let displayMode = 2; 
         let currentTool = 'point';
-        let brushRadius = 2.0;
-        let wandAngleThreshold = 20;
+        let brushRadius = 2.0, wandAngleThreshold = 20;
 
         let annotationData = {}; 
         let undoStack = []; 
@@ -321,19 +269,20 @@
         let isInteractWithModel = false; 
         let isDarkBackground = true;
 
-        let experimentConfig = {
-            userId: "Anonymous",
-            startTime: null,
-            currentStage: 0, 
-            logs: [] 
-        };
+        let experimentConfig = { userId: "Anonymous", startTime: null, currentStage: 0, logs: [] };
 
-        // --- Core Helper Functions ---
+        // ==========================================
+        // 2. 工具与辅助函数
+        // ==========================================
+        function safeBind(id, event, handler) {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener(event, handler);
+        }
+
         function logInteraction(type, details = {}) {
             const now = Date.now();
             if (type === 'camera_move' && now - lastLogTime < 200) return; 
             if (type === 'camera_move') lastLogTime = now;
-
             const logEntry = {
                 t: now, s: experimentConfig.currentStage, a: type,
                 cam: { 
@@ -346,251 +295,762 @@
             experimentConfig.logs.push(logEntry);
         }
 
-        function safeBind(id, event, handler) {
-            const el = document.getElementById(id);
-            if (el) el.addEventListener(event, handler);
+        function createCleanGeometryFromOriginal(originalGeometry) {
+            const cleanG = new THREE.BufferGeometry();
+            const requiredAttrs = ['position', 'normal', 'uv'];
+            
+            requiredAttrs.forEach(attrName => {
+                const oldAttr = originalGeometry.attributes[attrName];
+                if (oldAttr) {
+                    const arr = new Float32Array(oldAttr.count * oldAttr.itemSize);
+                    for (let i = 0; i < oldAttr.count; i++) {
+                        for (let j = 0; j < oldAttr.itemSize; j++) {
+                            arr[i * oldAttr.itemSize + j] = oldAttr.getComponent(i, j);
+                        }
+                    }
+                    cleanG.setAttribute(attrName, new THREE.BufferAttribute(arr, oldAttr.itemSize));
+                }
+            });
+
+            if (!cleanG.attributes.position) return null;
+
+            if (!cleanG.attributes.uv) {
+                const count = cleanG.attributes.position.count;
+                cleanG.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(count * 2), 2));
+            }
+            if (!cleanG.attributes.normal) {
+                cleanG.computeVertexNormals();
+            }
+            return cleanG;
         }
 
-        function cleanGeometry(geometry) {
-            const posAttr = geometry.attributes.position;
-            const count = posAttr.count;
-            let hasNaN = false;
-            for(let i=0; i<count; i++) {
-                const x = posAttr.getX(i); const y = posAttr.getY(i); const z = posAttr.getZ(i);
-                if (isNaN(x) || isNaN(y) || isNaN(z) || !isFinite(x) || !isFinite(y) || !isFinite(z)) {
-                    posAttr.setXYZ(i, 0, 0, 0); hasNaN = true;
+        function cleanGeometry(g) {
+            const p = g.attributes.position;
+            let f = false;
+            for(let i=0; i<p.count; i++) {
+                if(isNaN(p.getX(i)) || isNaN(p.getY(i)) || isNaN(p.getZ(i))) {
+                    p.setXYZ(i, 0, 0, 0); f = true;
                 }
             }
-            if (hasNaN) posAttr.needsUpdate = true;
+            if(f) p.needsUpdate = true;
         }
 
         function createTextSprite(text) {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             canvas.width = 64; canvas.height = 64;
-            ctx.fillStyle = "white";
-            ctx.font = "Bold 40px Arial";
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            ctx.strokeStyle = "black";
-            ctx.lineWidth = 4;
-            ctx.strokeText(text, 32, 32);
-            ctx.fillText(text, 32, 32);
+            ctx.fillStyle = "white"; ctx.font = "Bold 40px Arial"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.strokeStyle = "black"; ctx.lineWidth = 4;
+            ctx.strokeText(text, 32, 32); ctx.fillText(text, 32, 32);
             const texture = new THREE.CanvasTexture(canvas);
             const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture, depthTest: false }));
             sprite.scale.set(2, 2, 1);
             return sprite;
         }
 
-        window.onerror = function(message, source, lineno, colno, error) {
-            console.error(error);
-            alert(`程序出错: ${message}\n请检查控制台。`);
-        };
-
-        window.addEventListener('DOMContentLoaded', () => {
-            init();
-            animate();
-        });
-
-        function init() {
-            const container = document.getElementById('canvas-container');
-            const brushSizeInput = document.getElementById('brush-size');
-            const brushSizeVal = document.getElementById('brush-size-val');
-            const wandAngleInput = document.getElementById('wand-angle');
-            const confDisplay = document.getElementById('conf-display');
-
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x222222);
-            scene.add(new THREE.AxesHelper(50));
-
-            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 5000); 
-            camera.position.set(40, 40, 40);
-
-            renderer = new THREE.WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true }); 
-            renderer.setPixelRatio(window.devicePixelRatio);
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.outputColorSpace = THREE.SRGBColorSpace;
-            container.appendChild(renderer.domElement);
-
-            // Lighting: Enhanced Setup
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-            scene.add(ambientLight);
-
-            scene.add(camera); 
-            const camLight = new THREE.DirectionalLight(0xffffff, 1.8); 
-            camLight.position.set(0, 0, 1); 
-            camera.add(camLight);
-
-            const fillLights = [
-                { pos: [50, 100, 50], intensity: 1.5 },   
-                { pos: [-50, 20, -50], intensity: 1.0 },  
-                { pos: [0, -50, 0], intensity: 1.2 },     
-                { pos: [-50, 50, 50], intensity: 0.8 }    
-            ];
-            
-            fillLights.forEach(cfg => {
-                const light = new THREE.DirectionalLight(0xffffff, cfg.intensity);
-                light.position.set(...cfg.pos);
-                scene.add(light);
-            });
-            
-            const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.0);
-            hemiLight.position.set(0, 200, 0);
-            scene.add(hemiLight);
-
-            // Controls
-            orbitControls = new OrbitControls(camera, renderer.domElement);
-            orbitControls.enableDamping = true;
-            orbitControls.dampingFactor = 0.05;
-            orbitControls.screenSpacePanning = true; 
-            orbitControls.addEventListener('change', () => logInteraction('camera_move'));
-            orbitControls.enabled = false;
-
-            arcballControls = new ArcballControls(camera, renderer.domElement, scene);
-            arcballControls.setGizmosVisible(false); 
-            arcballControls.addEventListener('change', () => logInteraction('camera_move'));
-            arcballControls.enabled = true; // Default Active
-
-            currentControls = arcballControls; 
-            raycaster = new THREE.Raycaster();
-            mouse = new THREE.Vector2();
-
-            generateComplexBuilding(false);
-
-            // Event Listeners
-            window.addEventListener('resize', onWindowResize);
-            window.addEventListener('mousedown', onMouseDown); 
-            window.addEventListener('mouseup', onMouseUp); 
-            window.addEventListener('mousemove', onMouseMove);
-            window.addEventListener('click', onMouseClick);
-            window.addEventListener('dblclick', onDoubleClick); 
-            window.addEventListener('keydown', onKeyDown);
-            window.addEventListener('keyup', onKeyUp);
-
-            safeBind('start-experiment-btn', 'click', startExperimentCheck);
-            safeBind('demo-model-btn', 'click', loadDemoAndStart);
-            safeBind('init-file-input', 'change', handleInitFileUpload);
-            safeBind('gen-defect-btn', 'click', () => generateComplexBuilding(true));
-            safeBind('toggle-ctrl-btn', 'click', toggleControlMode); 
-            safeBind('undo-btn', 'click', performUndo);
-            safeBind('next-stage-btn', 'click', advanceStage);
-            safeBind('export-btn', 'click', exportData); 
-            safeBind('final-export-btn', 'click', exportData); 
-            safeBind('export-obj-btn', 'click', exportOBJ);
-            safeBind('export-json-btn', 'click', exportData);
-            safeBind('file-input', 'change', handleFileUpload);
-            safeBind('toggle-mode-btn', 'click', toggleDisplayMode);
-            safeBind('toggle-opacity-btn', 'click', toggleOpacityMode);
-            safeBind('toggle-bg-btn', 'click', toggleBackground);
-            
-            // View presets
-            safeBind('view-top', 'click', () => setView('top'));
-            safeBind('view-bottom', 'click', () => setView('bottom'));
-            safeBind('view-front', 'click', () => setView('front'));
-            safeBind('view-back', 'click', () => setView('back'));
-            safeBind('view-left', 'click', () => setView('left'));
-            safeBind('view-right', 'click', () => setView('right'));
-            
-            safeBind('btn-show-analysis', 'click', finishExperiment);
-            safeBind('close-analysis', 'click', () => document.getElementById('analysis-overlay').style.display = 'none');
-
-            // Viz Toggles
-            safeBind('viz-traj', 'change', (e) => { if(trajLines) trajLines.visible = e.target.checked; });
-            safeBind('viz-markers', 'change', (e) => { if(actionMarkersGroup) actionMarkersGroup.visible = e.target.checked; });
-            safeBind('viz-gaze', 'change', (e) => { if(gazeSpheresGroup) gazeSpheresGroup.visible = e.target.checked; });
-            safeBind('viz-seq', 'change', (e) => { if(seqTextGroup) seqTextGroup.visible = e.target.checked; });
-            
-            safeBind('viz-mode-default', 'click', () => recolorMesh('default'));
-            safeBind('viz-mode-stage', 'click', () => recolorMesh('stage'));
-            safeBind('viz-mode-hesitation', 'click', () => recolorMesh('hesitation'));
-            safeBind('viz-mode-conf', 'click', () => recolorMesh('confidence'));
-
-            document.getElementById('confidence-slider').addEventListener('input', (e) => { confDisplay.innerText = e.target.value + '%'; });
-
-            const toolBtns = {
-                point: document.getElementById('tool-point'),
-                brush: document.getElementById('tool-brush'),
-                wand: document.getElementById('tool-wand')
-            };
-
-            Object.keys(toolBtns).forEach(key => {
-                toolBtns[key].addEventListener('click', () => setTool(key));
-            });
-            
-            brushSizeInput.addEventListener('input', (e) => {
-                brushRadius = parseFloat(e.target.value);
-                brushSizeVal.innerText = brushRadius.toFixed(1);
-            });
-            
-            wandAngleInput.addEventListener('input', (e) => {
-                wandAngleThreshold = parseInt(e.target.value);
-            });
+        function buildAdjacencyGraph(geometry) {
+            const posAttr = geometry.attributes.position; 
+            const faceCount = posAttr.count / 3;
+            const vHashToFaces = new Map(); 
+            const precision = 1000; 
+            for (let f = 0; f < faceCount; f++) {
+                for (let k = 0; k < 3; k++) {
+                    const idx = f * 3 + k;
+                    const key = `${Math.round(posAttr.getX(idx)*precision)},${Math.round(posAttr.getY(idx)*precision)},${Math.round(posAttr.getZ(idx)*precision)}`;
+                    if (!vHashToFaces.has(key)) vHashToFaces.set(key, []); 
+                    vHashToFaces.get(key).push(f);
+                }
+            }
+            adjacencyMap = new Array(faceCount);
+            for (let f = 0; f < faceCount; f++) {
+                const neighbors = new Set();
+                for (let k = 0; k < 3; k++) {
+                    const idx = f * 3 + k;
+                    const key = `${Math.round(posAttr.getX(idx)*precision)},${Math.round(posAttr.getY(idx)*precision)},${Math.round(posAttr.getZ(idx)*precision)}`;
+                    const sharingFaces = vHashToFaces.get(key);
+                    for (let sf of sharingFaces) { if (sf !== f) neighbors.add(sf); }
+                }
+                adjacencyMap[f] = Array.from(neighbors);
+            }
         }
 
-        // --- View Preset Logic ---
-        function setView(type) {
+        // ==========================================
+        // 3. UI 与状态更新逻辑
+        // ==========================================
+        function updateUIStats() { 
+            const k = Object.keys(annotationData); 
+            document.getElementById('count-val').innerText = k.length; 
+            const s = experimentConfig.currentStage; 
+            document.getElementById('stage-count-val').innerText = k.filter(key=>annotationData[key].createdInStage === s).length; 
+        }
+        
+        function updateUndoButton() { 
+            document.getElementById('undo-btn').disabled = undoStack.length === 0; 
+        }
+
+        function setTool(toolName) {
+            currentTool = toolName;
+            const toolBtns = ['point', 'brush', 'wand'];
+            toolBtns.forEach(t => { 
+                const btn = document.getElementById(`tool-${t}`);
+                if (t === toolName) btn.classList.add('active'); else btn.classList.remove('active'); 
+            });
+            document.getElementById('param-brush').style.display = (toolName === 'brush') ? 'flex' : 'none';
+            document.getElementById('param-wand').style.display = (toolName === 'wand') ? 'flex' : 'none';
+            const brushCursor = document.getElementById('brush-cursor');
+            if (toolName === 'brush') { brushCursor.style.display = 'block'; document.body.style.cursor = 'none'; } else { brushCursor.style.display = 'none'; document.body.style.cursor = 'default'; }
+        }
+
+        function toggleBackground() { 
+            if (!scene) return; 
+            isDarkBackground = !isDarkBackground; 
+            scene.background = new THREE.Color(isDarkBackground ? 0x222222 : 0xffffff); 
+            const btn = document.getElementById('toggle-bg-btn'); 
+            if (btn) btn.innerText = isDarkBackground ? "🎨 背景: 深色" : "🎨 背景: 浅色"; 
+        }
+
+        function toggleControlMode() { 
+            if (currentControls === orbitControls) { 
+                orbitControls.enabled = false; arcballControls.enabled = true; arcballControls.target.copy(orbitControls.target); arcballControls.update(); currentControls = arcballControls; document.getElementById('toggle-ctrl-btn').innerText = "🕹️ 视角：自由 (3轴)"; 
+                const focusMsg = document.getElementById('focus-msg'); focusMsg.innerText = "🔄 进入3轴自由旋转模式"; focusMsg.style.opacity = 1; setTimeout(() => { focusMsg.style.opacity = 0; focusMsg.innerText = "🎯 视角已聚焦"; }, 1500);
+            } else { 
+                arcballControls.enabled = false; orbitControls.enabled = true; orbitControls.target.copy(arcballControls.target); camera.up.set(0, 1, 0); orbitControls.update(); currentControls = orbitControls; document.getElementById('toggle-ctrl-btn').innerText = "🕹️ 视角：建筑 (2轴)"; 
+            } 
+        }
+
+        function toggleOpacityMode() { 
+            if(!currentMesh) return; 
+            const mats = Array.isArray(currentMesh.material) ? currentMesh.material : [currentMesh.material]; 
+            mats.forEach(m => { if(!m) return; m.transparent = !m.transparent; m.opacity = m.transparent ? 0.5 : 1.0; m.needsUpdate = true; }); 
+            const newState = mats[0].transparent;
+            document.getElementById('toggle-opacity-btn').innerText = newState ? "💧 半透明: 开" : "💧 半透明: 关";
+        }
+
+        function toggleDisplayMode() { 
+            if(!currentMesh) return; 
+            displayMode = (displayMode + 1) % 3; 
+            forceDisplayMode(displayMode); 
+            const modeNames = ["纯纹理", "纹理+网格", "纯网格"];
+            document.getElementById('toggle-mode-btn').innerText = "👁️ 显示：" + modeNames[displayMode];
+        }
+
+        function forceDisplayMode(mode) {
             if (!currentMesh) return;
-            // Calculate center and size
-            const box = new THREE.Box3().setFromObject(currentMesh);
-            const center = new THREE.Vector3();
-            box.getCenter(center);
-            const size = box.getSize(new THREE.Vector3());
-            const maxDim = Math.max(size.x, size.y, size.z);
-            const dist = maxDim * 1.5;
+            displayMode = mode;
+            const materials = Array.isArray(currentMesh.material) ? currentMesh.material : [currentMesh.material];
+            const wireMesh = currentMesh.children.find(c => c.isMesh && c.material.wireframe);
+            const hasBackup = materials.some(m => !!(m && m.userData && m.userData.originalMap));
+            if (!hasBackup && mode !== 2) { displayMode = 2; mode = 2; }
+            switch (mode) {
+                case 0: materials.forEach(m => { if(!m) return; if (m.userData.originalMap) { m.map = m.userData.originalMap; m.needsUpdate = true; } }); if (wireMesh) wireMesh.material.opacity = 0.01; refreshColors(true); break;
+                case 1: materials.forEach(m => { if(!m) return; if (m.userData.originalMap) { m.map = m.userData.originalMap; m.needsUpdate = true; } }); if (wireMesh) wireMesh.material.opacity = 0.2; refreshColors(true); break;
+                case 2: materials.forEach(m => { if(!m) return; if (m.map) m.userData.originalMap = m.map; m.map = null; m.needsUpdate = true; }); if (wireMesh) wireMesh.material.opacity = 0.15; refreshColors(false); break;
+            }
+        }
 
-            let pos = new THREE.Vector3();
-            let up = new THREE.Vector3(0, 1, 0); // Default up
+        function refreshColors(isTextureMode) { 
+            if (!currentMesh) return; 
+            const colorAttr = currentMesh.geometry.attributes.color; 
+            const count = colorAttr.count / 3; 
+            const baseVal = isTextureMode ? 1.0 : 0.66; 
+            for (let f = 0; f < count; f++) { 
+                if (annotationData[f] && annotationData[f].marked) { 
+                    const t = annotationData[f].confidence / 100; 
+                    for(let k=0; k<3; k++) colorAttr.setXYZ(f*3+k, 1 * (0.5+t/2), 0.2, 0.2); 
+                } else { 
+                    for(let k=0; k<3; k++) colorAttr.setXYZ(f*3+k, baseVal, baseVal, baseVal); 
+                } 
+            } 
+            colorAttr.needsUpdate = true; 
+        }
 
-            switch(type) {
-                case 'top': 
-                    pos.set(0, dist, 0).add(center); 
-                    up.set(0, 0, -1); 
-                    break;
-                case 'bottom': 
-                    pos.set(0, -dist, 0).add(center); 
-                    up.set(0, 0, 1);
-                    break;
-                case 'front': 
-                    pos.set(0, 0, dist).add(center); 
-                    break;
-                case 'back': 
-                    pos.set(0, 0, -dist).add(center); 
-                    break;
-                case 'left': 
-                    pos.set(-dist, 0, 0).add(center); 
-                    break;
-                case 'right': 
-                    pos.set(dist, 0, 0).add(center); 
-                    break;
+        function recolorMesh(mode) {
+            if (!currentMesh) return;
+            const colorAttr = currentMesh.geometry.attributes.color; 
+            const count = colorAttr.count; 
+            const faceCount = count / 3;
+            document.getElementById('legend-stage').style.display = (mode === 'stage') ? 'flex' : 'none';
+            for (let f = 0; f < faceCount; f++) {
+                if (annotationData[f] && annotationData[f].marked) {
+                    const data = annotationData[f]; let r = 1, g = 0, b = 0; 
+                    if (mode === 'stage') { if (data.createdInStage === 1) { r=0; g=0; b=1; } else if (data.createdInStage === 2) { r=0; g=1; b=0; } else { r=1; g=0; b=0; } } 
+                    else if (mode === 'confidence') { const t = data.confidence / 100; r = 1.0; g = 1.0 - t; b = 0; } 
+                    else if (mode === 'hesitation') { const t = Math.min(data.decisionTime / 3000, 1.0); r = t * 0.5; g = 1-t; b = 1-t * 0.5; }
+                    for(let k=0; k<3; k++) colorAttr.setXYZ(f*3+k, r, g, b);
+                } else { for(let k=0; k<3; k++) colorAttr.setXYZ(f*3+k, 0.8, 0.8, 0.8); }
+            }
+            colorAttr.needsUpdate = true;
+        }
+
+        // ==========================================
+        // 4. 标注核心算法 (Point, Brush, Wand)
+        // ==========================================
+        function highlightFace(idx, show) { 
+            if (annotationData[idx]) return; 
+            const attr = currentMesh.geometry.attributes.color; 
+            const r = show ? 0 : (displayMode===2 ? 0.66 : 1.0); 
+            const g = show ? 0.8 : (displayMode===2 ? 0.66 : 1.0); 
+            const b = show ? 1 : (displayMode===2 ? 0.66 : 1.0); 
+            for(let i=0; i<3; i++) attr.setXYZ(idx*3+i, r, g, b); 
+            attr.needsUpdate = true; 
+        }
+
+        function performUndo() { 
+            if (undoStack.length === 0) return; 
+            const lastAction = undoStack.pop(); 
+            const colorAttr = currentMesh.geometry.attributes.color; 
+            const baseVal = displayMode !== 2 ? 1.0 : 0.66; 
+            lastAction.forEach(change => { 
+                const fIdx = change.faceIndex; 
+                if (change.oldState === null) { 
+                    delete annotationData[fIdx]; 
+                    for(let i=0; i<3; i++) colorAttr.setXYZ(fIdx*3+i, baseVal, baseVal, baseVal); 
+                } else { 
+                    annotationData[fIdx] = change.oldState; 
+                    const t = change.oldState.confidence/100; 
+                    for(let i=0; i<3; i++) colorAttr.setXYZ(fIdx*3+i, 1* (0.5+t/2), 0.2, 0.2); 
+                } 
+            }); 
+            logInteraction('undo'); 
+            colorAttr.needsUpdate = true; 
+            updateUIStats(); 
+            document.getElementById('undo-btn').disabled = undoStack.length === 0; 
+        }
+
+        function batchMarkFaces(faceIndices, isDeletion = false) {
+            const confidence = parseInt(document.getElementById('confidence-slider').value);
+            const intensity = 0.5 + (confidence / 200);
+            const colorAttr = currentMesh.geometry.attributes.color;
+            const posAttr = currentMesh.geometry.attributes.position;
+            const normalAttr = currentMesh.geometry.attributes.normal;
+            const actionChanges = []; 
+            const stage = experimentConfig.currentStage;
+            const baseVal = displayMode !== 2 ? 1.0 : 0.66;
+            const pA = new THREE.Vector3(), pB = new THREE.Vector3(), pC = new THREE.Vector3();
+            const center = new THREE.Vector3(), normal = new THREE.Vector3(), viewDir = new THREE.Vector3();
+
+            faceIndices.forEach(fIdx => {
+                if (isDeletion) {
+                    if (annotationData[fIdx]) {
+                        actionChanges.push({ faceIndex: fIdx, oldState: {...annotationData[fIdx]} });
+                        delete annotationData[fIdx];
+                        for(let i=0; i<3; i++) colorAttr.setXYZ(fIdx*3+i, baseVal, baseVal, baseVal);
+                    }
+                } else {
+                    if (!annotationData[fIdx] || !annotationData[fIdx].marked) {
+                        actionChanges.push({ faceIndex: fIdx, oldState: null });
+                        pA.fromBufferAttribute(posAttr, fIdx*3); pB.fromBufferAttribute(posAttr, fIdx*3+1); pC.fromBufferAttribute(posAttr, fIdx*3+2);
+                        center.addVectors(pA, pB).add(pC).divideScalar(3); center.applyMatrix4(currentMesh.matrixWorld);
+                        const distToCam = camera.position.distanceTo(center);
+                        const screenPos = center.clone().project(camera);
+                        const screenDist = new THREE.Vector2(screenPos.x, screenPos.y).length();
+                        normal.fromBufferAttribute(normalAttr, fIdx*3);
+                        normal.applyMatrix3(new THREE.Matrix3().getNormalMatrix(currentMesh.matrixWorld)).normalize();
+                        viewDir.subVectors(camera.position, center).normalize();
+                        const dot = normal.dot(viewDir);
+                        annotationData[fIdx] = {
+                            marked: true, createdInStage: stage, confidence: confidence, timestamp: Date.now(), decisionTime: Date.now() - hoverStartTime,
+                            viewAngle: dot.toFixed(3), cameraDist: distToCam.toFixed(3), screenCentricity: screenDist.toFixed(3)
+                        };
+                        for(let i=0; i<3; i++) colorAttr.setXYZ(fIdx*3+i, 1 * intensity, 0.2, 0.2); 
+                    }
+                }
+            });
+            if (actionChanges.length > 0) {
+                undoStack.push(actionChanges);
+                logInteraction(isDeletion ? 'mark_delete' : 'mark_add', { count: faceIndices.length, tool: currentTool });
+                document.getElementById('undo-btn').disabled = false;
+                colorAttr.needsUpdate = true;
+                updateUIStats();
+            }
+        }
+
+        function magicWandSelect(startFaceIndex, isDeletion = false) {
+            if (!adjacencyMap) { alert("正在构建拓扑结构..."); return; }
+            const visited = new Set(); const queue = [startFaceIndex]; const selectedFaces = [];
+            visited.add(startFaceIndex);
+            const normalAttr = currentMesh.geometry.attributes.normal;
+            const getFaceNormal = (fIdx) => new THREE.Vector3().fromBufferAttribute(normalAttr, fIdx * 3);
+            const startNormal = getFaceNormal(startFaceIndex);
+            const thresholdDot = Math.cos(THREE.MathUtils.degToRad(wandAngleThreshold));
+            while(queue.length > 0) {
+                const currentF = queue.shift(); selectedFaces.push(currentF);
+                const neighbors = adjacencyMap[currentF]; if (!neighbors) continue;
+                for (let neighbor of neighbors) {
+                    if (!visited.has(neighbor)) {
+                        if (startNormal.dot(getFaceNormal(neighbor)) >= thresholdDot) { visited.add(neighbor); queue.push(neighbor); }
+                    }
+                }
+            }
+            batchMarkFaces(selectedFaces, isDeletion);
+            const focusMsg = document.getElementById('focus-msg');
+            focusMsg.innerText = isDeletion ? `🧹 消除 ${selectedFaces.length} 个面片` : `🪄 选中 ${selectedFaces.length} 个面片`;
+            focusMsg.style.opacity = 1; setTimeout(() => focusMsg.style.opacity = 0, 1500);
+        }
+
+        function brushSelect(centerPoint, isDeletion = false) {
+            const posAttr = currentMesh.geometry.attributes.position;
+            const faceCount = posAttr.count / 3; const rSq = brushRadius * brushRadius; const selectedFaces = [];
+            const p1 = new THREE.Vector3(), p2 = new THREE.Vector3(), p3 = new THREE.Vector3(), center = new THREE.Vector3();
+            const localPoint = centerPoint.clone().applyMatrix4(currentMesh.matrixWorld.clone().invert());
+            for (let f = 0; f < faceCount; f++) {
+                p1.fromBufferAttribute(posAttr, f*3); p2.fromBufferAttribute(posAttr, f*3+1); p3.fromBufferAttribute(posAttr, f*3+2);
+                center.addVectors(p1, p2).add(p3).divideScalar(3);
+                if (center.distanceToSquared(localPoint) <= rSq) selectedFaces.push(f);
+            }
+            batchMarkFaces(selectedFaces, isDeletion);
+        }
+
+        // ==========================================
+        // 5. 交互事件处理
+        // ==========================================
+        function onWindowResize() { 
+            camera.aspect = window.innerWidth / window.innerHeight; 
+            camera.updateProjectionMatrix(); 
+            renderer.setSize(window.innerWidth, window.innerHeight); 
+        }
+        function onKeyDown(e) { if(e.key==='Control') { currentControls.enabled=false; if(currentTool==='point') document.body.style.cursor='crosshair'; } if((e.ctrlKey||e.metaKey)&&e.key==='z') performUndo(); }
+        function onKeyUp(e) { if(e.key==='Control') { currentControls.enabled=true; if(currentTool==='point') document.body.style.cursor='default'; } }
+
+        function onMouseDown(event) {
+            mouseDownPosition.set(event.clientX, event.clientY);
+            if (currentTool !== 'point' && currentMesh) {
+                mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObject(currentMesh);
+                if (intersects.length > 0) { 
+                    isInteractWithModel = true; 
+                    currentControls.enabled = false; 
+                    if (currentTool === 'brush') brushSelect(intersects[0].point, event.shiftKey); 
+                } else { 
+                    isInteractWithModel = false; 
+                }
+            }
+        }
+        function onMouseUp() { currentControls.enabled = true; isInteractWithModel = false; }
+        
+        function onMouseMove(event) {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            const brushCursor = document.getElementById('brush-cursor');
+            const cursorFeedback = document.getElementById('cursor-feedback');
+            
+            if (currentTool === 'brush') {
+                brushCursor.style.left = event.clientX + 'px';
+                brushCursor.style.top = event.clientY + 'px';
+                const scale = 50 * brushRadius / camera.position.distanceTo(new THREE.Vector3(0,0,0)) * 10;
+                brushCursor.style.width = Math.max(20, scale) + 'px'; brushCursor.style.height = Math.max(20, scale) + 'px';
+                if (event.shiftKey) { brushCursor.style.borderColor = "white"; brushCursor.style.backgroundColor = "rgba(255, 255, 255, 0.2)"; } 
+                else { brushCursor.style.borderColor = "rgba(0, 210, 255, 0.8)"; brushCursor.style.backgroundColor = "rgba(0, 210, 255, 0.1)"; }
+            } else { 
+                cursorFeedback.style.left = event.clientX + 15 + 'px'; cursorFeedback.style.top = event.clientY + 15 + 'px'; 
             }
             
-            animateFocus(center, pos, up);
-            logInteraction('view_preset', { type: type });
+            if (!currentMesh) return;
+            
+            if (isInteractWithModel && event.buttons === 1) { 
+                if (currentTool === 'brush') { 
+                    raycaster.setFromCamera(mouse, camera); 
+                    const intersects = raycaster.intersectObject(currentMesh); 
+                    if (intersects.length > 0) brushSelect(intersects[0].point, event.shiftKey); 
+                } 
+                return; 
+            }
+            
+            if (!isInteractWithModel) {
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObject(currentMesh);
+                if (intersects.length > 0) {
+                    const idx = intersects[0].faceIndex;
+                    if (idx !== hoveredFaceIndex) { 
+                        if (hoveredFaceIndex !== -1 && currentTool === 'point') highlightFace(hoveredFaceIndex, false); 
+                        hoveredFaceIndex = idx; 
+                        hoverStartTime = Date.now(); 
+                        if (currentTool === 'point') { 
+                            cursorFeedback.style.display = 'block'; 
+                            cursorFeedback.innerText = "Face: " + idx; 
+                            highlightFace(idx, true); 
+                        } 
+                    }
+                    if (currentTool === 'point' && event.buttons === 1 && event.ctrlKey) batchMarkFaces([idx], event.shiftKey);
+                } else { 
+                    if (hoveredFaceIndex !== -1 && currentTool === 'point') highlightFace(hoveredFaceIndex, false); 
+                    hoveredFaceIndex = -1; 
+                    cursorFeedback.style.display = 'none'; 
+                }
+            }
+        }
+        
+        function onMouseClick(event) {
+            if (hoveredFaceIndex === -1 || !currentMesh) return;
+            if (event.target.closest('.overlay-panel') || event.target.closest('#ui-layer') || event.target.closest('#bottom-bar') || event.target.closest('#analysis-panel-mini')) return;
+            const moveDist = Math.abs(event.clientX - mouseDownPosition.x) + Math.abs(event.clientY - mouseDownPosition.y);
+            if (moveDist > 5) return;
+            if (currentTool === 'point') batchMarkFaces([hoveredFaceIndex], event.shiftKey);
+            else if (currentTool === 'wand') magicWandSelect(hoveredFaceIndex, event.shiftKey);
+        }
+        
+        function onDoubleClick(event) {
+            if (hoveredFaceIndex === -1 || !currentMesh) return;
+            raycaster.setFromCamera(mouse, camera); 
+            const intersects = raycaster.intersectObject(currentMesh);
+            if (intersects.length > 0) {
+                const targetPoint = intersects[0].point; 
+                const faceNormal = intersects[0].face.normal.clone().transformDirection(currentMesh.matrixWorld).normalize();
+                const distance = camera.position.distanceTo(targetPoint); 
+                const newCamPos = targetPoint.clone().add(faceNormal.multiplyScalar(distance * 0.5)); 
+                animateFocus(targetPoint, newCamPos, new THREE.Vector3(0, 1, 0)); 
+                const focusMsg = document.getElementById('focus-msg'); 
+                focusMsg.style.opacity = 1; setTimeout(() => focusMsg.style.opacity = 0, 1500);
+            }
         }
 
-        // --- Analysis & Visualization ---
+        // ==========================================
+        // 6. 视角系统与文件导出
+        // ==========================================
+        function setView(type) { 
+            if (!currentMesh) return; 
+            const dist = 60; // Model size is normalized to 40
+            let pos = new THREE.Vector3(); let up = new THREE.Vector3(0, 1, 0); 
+            if(type=='top'){pos.set(0,dist,0);up.set(0,0,-1);} else if(type=='bottom'){pos.set(0,-dist,0);up.set(0,0,1);} else if(type=='front')pos.set(0,0,dist); else if(type=='back')pos.set(0,0,-dist); else if(type=='left')pos.set(-dist,0,0); else if(type=='right')pos.set(dist,0,0); 
+            animateFocus(new THREE.Vector3(0,0,0), pos, up); logInteraction('view_preset', {type:type}); 
+        }
+
+        function animateFocus(t, p, u) { 
+            focusTargetPos.copy(t); focusCameraPos.copy(p); 
+            if(u) focusCameraUp.copy(u); else focusCameraUp.copy(camera.up); 
+            isFocusing=true; 
+        }
+
+        function exportData() { 
+            const d="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify({meta:{userId:experimentConfig.userId, logs:experimentConfig.logs}, annotations:annotationData})); 
+            const a=document.createElement('a'); a.href=d; a.download="data.json"; a.click(); 
+        }
+        
+        function exportOBJ() { 
+            if(!currentMesh) return; 
+            const lines=['o Model']; 
+            const p=currentMesh.geometry.attributes.position; 
+            const c=currentMesh.geometry.attributes.color; 
+            for(let i=0;i<p.count;i++) lines.push(`v ${p.getX(i)} ${p.getY(i)} ${p.getZ(i)} ${c.getX(i)} ${c.getY(i)} ${c.getZ(i)}`); 
+            for(let i=0;i<p.count;i+=3) lines.push(`f ${i+1} ${i+2} ${i+3}`); 
+            const b=new Blob([lines.join('\n')],{type:'text/plain'}); 
+            const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download="model.obj"; a.click(); 
+        }
+
+        // ==========================================
+        // 7. 模型加载与处理流水线
+        // ==========================================
+        function handleFileUpload(e) { 
+            const files = e.target.files; if (!files.length) return; 
+            document.getElementById('loading-overlay').style.display = 'flex'; 
+            document.getElementById('loading-text').innerText = "读取文件中...";
+            
+            undoStack=[]; objectURLs.forEach(u=>URL.revokeObjectURL(u)); objectURLs=[]; 
+            const map=new Map(); let objFile,mtlFile,glbFile; 
+            
+            for(let f of files) { 
+                const u=URL.createObjectURL(f); objectURLs.push(u); map.set(f.name,u); 
+                const low = f.name.toLowerCase();
+                if(low.endsWith('.obj')) objFile=f.name; if(low.endsWith('.mtl')) mtlFile=f.name; if(low.endsWith('.glb')||low.endsWith('.gltf')) glbFile=f.name; 
+            } 
+            
+            const mgr=new THREE.LoadingManager(); 
+            mgr.setURLModifier(u=>map.get(u.split('/').pop())||u); 
+            
+            setTimeout(() => {
+                if(glbFile) {
+                    const loader = new GLTFLoader(mgr);
+                    const draco = new DRACOLoader(); draco.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+                    loader.setDRACOLoader(draco);
+                    loader.load(map.get(glbFile), g => handleLoadedObject(g.scene), undefined, err => { console.error(err); alert("GLB 读取失败"); document.getElementById('loading-overlay').style.display='none'; });
+                } else if(objFile) { 
+                    const l=new OBJLoader(mgr); 
+                    if(mtlFile) new MTLLoader(mgr).load(map.get(mtlFile), m=>{ l.setMaterials(m); l.load(map.get(objFile), handleLoadedObject); }); 
+                    else l.load(map.get(objFile), handleLoadedObject); 
+                } else {
+                    document.getElementById('loading-overlay').style.display='none';
+                }
+            }, 100);
+        }
+
+        function handleLoadedObject(obj) { 
+            document.getElementById('loading-text').innerText = "清洗并重建几何网格...";
+            
+            setTimeout(() => {
+                const geos=[]; const mats=[]; 
+                obj.updateMatrixWorld(true);
+                
+                obj.traverse(c=>{ 
+                    if(c.isMesh && c.geometry) { 
+                        let g = c.geometry.clone();
+                        g.applyMatrix4(c.matrixWorld);
+                        if (g.index !== null) g = g.toNonIndexed(); 
+                        
+                        g = createCleanGeometryFromOriginal(g);
+                        if(!g) return; // 跳过无效网格
+
+                        geos.push(g); 
+                        let m = c.material; 
+                        if(Array.isArray(m)) m=m[0]; 
+                        if(!m) m=new THREE.MeshStandardMaterial({color:0xcccccc}); 
+                        
+                        // 强制处理原材质为全白，防止暗黑模型在白模模式下不可见
+                        if(m.color) m.color.setHex(0xffffff);
+                        mats.push(m); 
+                    } 
+                }); 
+                
+                if(!geos.length) { 
+                    alert("模型中未找到有效的网格数据。"); 
+                    document.getElementById('loading-overlay').style.display='none'; 
+                    return; 
+                } 
+                
+                try {
+                    const mergedGeom = BufferGeometryUtils.mergeGeometries(geos, true); 
+                    processGeometry(mergedGeom, mats); 
+                } catch(e) {
+                    console.error("合并失败细节:", e);
+                    alert("模型子网格极其复杂或存在拓扑错误，合并失败。");
+                    document.getElementById('loading-overlay').style.display='none';
+                }
+            }, 50);
+        }
+
+        function generateComplexBuilding() { 
+            document.getElementById('loading-overlay').style.display='flex'; 
+            document.getElementById('loading-text').innerText = "生成内部模型...";
+            setTimeout(()=>{ 
+                let g = new THREE.BoxGeometry(20,20,20,20,20,20).toNonIndexed(); 
+                const p = g.attributes.position; 
+                for(let i=0;i<p.count;i++) if(!isNaN(p.getY(i))) p.setY(i, p.getY(i)+Math.random()*0.5); 
+                
+                g = createCleanGeometryFromOriginal(g); 
+                g.addGroup(0, g.attributes.position.count, 0); 
+                
+                const mat = new THREE.MeshStandardMaterial({vertexColors:true, color: 0xffffff});
+                processGeometry(g, [mat]); 
+                if(document.getElementById('login-overlay').style.display==='flex') startExperiment(); 
+            }, 50); 
+        }
+
+        function processGeometry(g, mats) { 
+            if(currentMesh){scene.remove(currentMesh); currentMesh.geometry.dispose();} 
+            
+            // 居中归一化
+            g.computeBoundingBox();
+            const center = new THREE.Vector3();
+            g.boundingBox.getCenter(center);
+            g.translate(-center.x, -center.y, -center.z); 
+            
+            g.computeBoundingBox();
+            const sz = new THREE.Vector3(); 
+            g.boundingBox.getSize(sz); 
+            const maxDim = Math.max(sz.x, sz.y, sz.z);
+            if (maxDim > 0 && maxDim !== Infinity) {
+                const scaleFactor = 40.0 / maxDim; 
+                g.scale(scaleFactor, scaleFactor, scaleFactor);
+            }
+            
+            g.computeBoundingBox();
+            buildAdjacencyGraph(g); 
+            
+            camera.position.set(30, 30, 30); 
+            camera.lookAt(0,0,0); 
+            orbitControls.target.set(0,0,0); 
+            arcballControls.target.set(0,0,0); 
+            
+            if (!Array.isArray(mats)) mats = [mats];
+            if (g.groups && g.groups.length > mats.length) {
+                const defaultMat = new THREE.MeshStandardMaterial({color:0xffffff});
+                while(mats.length < g.groups.length) mats.push(defaultMat);
+            }
+            
+            mats.forEach(m => { 
+                if(m) { 
+                    m.vertexColors = true; 
+                    m.flatShading = false; 
+                    m.side = THREE.DoubleSide; 
+                    m.alphaTest = 0.5; 
+                    if(m.map) { m.userData.originalMap = m.map; m.map.colorSpace = THREE.SRGBColorSpace; } 
+                } 
+            }); 
+            
+            const c = []; for(let i=0; i<g.attributes.position.count; i++) c.push(0.66,0.66,0.66); 
+            g.setAttribute('color', new THREE.Float32BufferAttribute(c,3)); 
+            
+            currentMesh = new THREE.Mesh(g, mats); 
+            const wireMat = new THREE.MeshBasicMaterial({color:0x000000, wireframe:true, transparent:true, opacity:0.03});
+            currentMesh.add(new THREE.Mesh(g, wireMat)); 
+            scene.add(currentMesh); 
+            
+            annotationData = {}; undoStack = []; updateUIStats(); 
+            document.getElementById('loading-overlay').style.display='none'; 
+            
+            if(autoStartExperiment){ startExperiment(); autoStartExperiment=false; } 
+            else if(experimentConfig.currentStage===1) forceDisplayMode(2); 
+        }
+
+        // ==========================================
+        // 8. 实验流程控制
+        // ==========================================
+        function startExperimentCheck() {
+            const userIdInput = document.getElementById('user-id-input');
+            if (userIdInput.value.trim() === "") { alert("请输入参与者 ID！"); return; }
+            if (currentMesh) startExperiment();
+            else document.getElementById('init-file-input').click();
+        }
+
+        function handleInitFileUpload(event) {
+            const userIdInput = document.getElementById('user-id-input');
+            if (userIdInput.value.trim() === "") { alert("请先输入参与者 ID！"); event.target.value = ''; return; }
+            autoStartExperiment = true; handleFileUpload(event); 
+        }
+
+        function loadDemoAndStart() {
+            const userIdInput = document.getElementById('user-id-input');
+            if (userIdInput.value.trim() === "") { alert("请输入参与者 ID！"); return; }
+            autoStartExperiment = true; generateComplexBuilding(); 
+        }
+
+        function startExperiment() {
+            experimentConfig.userId = document.getElementById('user-id-input').value.trim();
+            experimentConfig.startTime = new Date().toISOString(); experimentConfig.logs = []; 
+            document.getElementById('login-overlay').style.display = 'none'; document.getElementById('ui-layer').style.display = 'block'; document.getElementById('bottom-bar').style.display = 'flex';
+            setStage(1); logInteraction('experiment_start', { model: 'loaded_model' });
+        }
+
+        function setStage(stageNum) {
+            experimentConfig.currentStage = stageNum;
+            document.querySelectorAll('.stage-step').forEach(el => el.classList.remove('active')); document.getElementById(`step-${stageNum}`).classList.add('active');
+            const stageTitle = document.getElementById('stage-title'); const stageDesc = document.getElementById('stage-desc'); const nextStageBtn = document.getElementById('next-stage-btn');
+            if (stageNum === 1) { stageTitle.innerText = "阶段 1: 纯几何观察"; stageDesc.innerText = "请仅根据几何结构（白模）标记模型缺陷。忽略纹理信息。"; forceDisplayMode(2); } 
+            else if (stageNum === 2) { stageTitle.innerText = "阶段 2: 纹理观察"; stageDesc.innerText = "模型已切换为纯纹理模式。请检查是否有纹理拉伸、模糊或错位。"; forceDisplayMode(0); } 
+            else if (stageNum === 3) { stageTitle.innerText = "阶段 3: 综合校验"; stageDesc.innerText = "叠加几何线框。请综合判断并修正之前的标记。"; forceDisplayMode(1); nextStageBtn.innerText = "🏁 完成实验并分析"; }
+            logInteraction('stage_change', { stage: stageNum }); updateUIStats();
+        }
+
+        function advanceStage() {
+            if (experimentConfig.currentStage < 3) setStage(experimentConfig.currentStage + 1);
+            else finishExperiment();
+        }
+
         function finishExperiment() {
             logInteraction('experiment_end');
-            
-            document.getElementById('ui-layer').style.display = 'none';
-            document.getElementById('bottom-bar').style.display = 'none';
+            // 注意：不隐藏 ui-layer 和 bottom-bar，让用户可以边看分析边操作
             document.getElementById('analysis-overlay').style.display = 'block';
-            
             visualizeTrajectory();
             visualizeActions();
             visualizeGazeAndSeq();
-            
             forceDisplayMode(1);
-            alert("实验完成！您现在可以查看交互轨迹和认知热力图。");
+        }
+
+        // ==========================================
+        // 9. 分析报告与大模型系统 (Gemini)
+        // ==========================================
+        async function fetchGeminiAnalysis(promptText) {
+            const apiKey = "";
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: promptText }] }],
+                systemInstruction: { parts: [{ text: "你是一个高级认知科学与3D模型体验分析专家。请根据给定的实验数据，直接输出专业、敏锐的分析结论，无需寒暄。采用HTML的<p>和<b>标签进行格式化排版。" }] }
+            };
+
+            let retries = 5;
+            let delay = 1000;
+            
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    const result = await response.json();
+                    return result.candidates?.[0]?.content?.parts?.[0]?.text || "分析生成失败，未返回有效文本。";
+                } catch (error) {
+                    if (i === retries - 1) return `<p style="color:#e74c3c;">AI 分析调用失败，网络异常或已达到限制。请稍后重试。</p>`;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2;
+                }
+            }
+        }
+
+        async function generateReport() {
+            const annotations = Object.values(annotationData);
+            const total = annotations.length;
+            if (total === 0) { alert("尚未标记任何内容，无法生成分析。"); return; }
+            
+            const stageCounts = {1:0, 2:0, 3:0};
+            let totalConf = 0; let totalTime = 0; let roughnessSum = 0;
+            
+            annotations.forEach(a => {
+                stageCounts[a.createdInStage] = (stageCounts[a.createdInStage] || 0) + 1;
+                totalConf += a.confidence;
+                totalTime += (a.decisionTime || 0);
+                roughnessSum += (1.0 - parseFloat(a.viewAngle)); 
+            });
+
+            const avgConf = (totalConf / total).toFixed(1);
+            const avgTime = (totalTime / total).toFixed(0);
+            const avgRoughnessScore = (roughnessSum / total).toFixed(2); 
+
+            // 构建骨架
+            const html = `
+                <div class="report-section">
+                    <h3>📈 统计概览</h3>
+                    <div class="stat-grid">
+                        <div class="stat-card"><span class="stat-num">${total}</span><span class="stat-label">总标记数</span></div>
+                        <div class="stat-card"><span class="stat-num">${avgConf}%</span><span class="stat-label">平均确信度</span></div>
+                        <div class="stat-card"><span class="stat-num">${avgTime}ms</span><span class="stat-label">平均决策耗时</span></div>
+                        <div class="stat-card"><span class="stat-num">${avgRoughnessScore}</span><span class="stat-label">几何复杂关注度</span></div>
+                    </div>
+                </div>
+                <div class="report-section">
+                    <h3>🛑 阶段分布</h3>
+                    <p>Stage 1 (白模几何): <b>${stageCounts[1]}</b> | Stage 2 (纯纹理): <b>${stageCounts[2]}</b> | Stage 3 (综合线框): <b>${stageCounts[3]}</b></p>
+                    <div style="width:100%; height:10px; background:#444; border-radius:5px; overflow:hidden; display:flex; margin-top:5px;">
+                        <div style="width:${(stageCounts[1]/total)*100}%; background:#0000ff;"></div>
+                        <div style="width:${(stageCounts[2]/total)*100}%; background:#00ff00;"></div>
+                        <div style="width:${(stageCounts[3]/total)*100}%; background:#ff0000;"></div>
+                    </div>
+                </div>
+                <div class="report-section">
+                    <h3>💡 自动认知分析与讨论 (Gemini AI生成)</h3>
+                    <div class="discussion-text" id="ai-discussion-content">
+                        <p style="color:#00d2ff; animation: pulse 1s infinite;">🤖 正在连接大模型生成深度洞察...</p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('report-body').innerHTML = html;
+            document.getElementById('report-overlay').style.display = 'flex';
+            document.getElementById('analysis-overlay').style.display = 'none'; 
+
+            // Prompt for Gemini
+            const aiPrompt = `请基于以下一名测试者在3D模型质量审查实验中的数据，生成一段认知模式分析报告：
+- 发现的缺陷总数：${total}
+- 平均确信度：${avgConf}%
+- 平均发现耗时：${avgTime} 毫秒
+- 几何复杂度关注度 (0为平坦区，1为尖锐边缘)：${avgRoughnessScore}
+- 阶段分布：在"纯几何白模"阶段发现 ${stageCounts[1]} 个，在"纯纹理"阶段发现 ${stageCounts[2]} 个，在"混合校验"阶段发现 ${stageCounts[3]} 个。
+分析重点：判断该模型的主要问题是几何破损还是纹理拉伸失真，用户的操作是果断还是犹豫，以及用户对边缘特征和平坦区域哪一个更敏感。字数150-250字，使用HTML标签（如<p>和<b>）进行优雅排版。`;
+
+            const aiResult = await fetchGeminiAnalysis(aiPrompt);
+            
+            const contentBox = document.getElementById('ai-discussion-content');
+            if(contentBox) {
+                contentBox.innerHTML = aiResult;
+            }
         }
 
         function visualizeTrajectory() {
             if (trajLines) scene.remove(trajLines);
-            const points = [];
-            const colors = [];
+            const points = []; const colors = [];
             const logs = experimentConfig.logs.filter(l => l.a === 'camera_move');
             if (logs.length < 2) return;
-
             const totalTime = logs[logs.length-1].t - logs[0].t;
             logs.forEach((l, i) => {
                 points.push(new THREE.Vector3(...l.cam.p));
@@ -608,664 +1068,150 @@
             if (actionMarkersGroup) scene.remove(actionMarkersGroup);
             actionMarkersGroup = new THREE.Group();
             const addLog = experimentConfig.logs.filter(l => l.a === 'mark_add');
-            const markerGeo = new THREE.ConeGeometry(0.5, 1.5, 8);
-            markerGeo.rotateX(Math.PI / 2); 
+            const markerGeo = new THREE.ConeGeometry(0.5, 1.5, 8); markerGeo.rotateX(Math.PI / 2); 
             const markerMat = new THREE.MeshBasicMaterial({ color: 0xffff00 });
-
             addLog.forEach(l => {
-                const mesh = new THREE.Mesh(markerGeo, markerMat);
-                mesh.position.set(...l.cam.p);
-                mesh.lookAt(new THREE.Vector3(...l.cam.t));
-                actionMarkersGroup.add(mesh);
+                const mesh = new THREE.Mesh(markerGeo, markerMat); mesh.position.set(...l.cam.p); mesh.lookAt(new THREE.Vector3(...l.cam.t)); actionMarkersGroup.add(mesh);
             });
             scene.add(actionMarkersGroup);
         }
 
         function visualizeGazeAndSeq() {
-            if (gazeSpheresGroup) scene.remove(gazeSpheresGroup);
-            if (seqTextGroup) scene.remove(seqTextGroup);
-            gazeSpheresGroup = new THREE.Group();
-            seqTextGroup = new THREE.Group();
-
+            if (gazeSpheresGroup) scene.remove(gazeSpheresGroup); if (seqTextGroup) scene.remove(seqTextGroup);
+            gazeSpheresGroup = new THREE.Group(); seqTextGroup = new THREE.Group();
             const logs = experimentConfig.logs;
             const addLog = logs.filter(l => l.a === 'mark_add');
-            
             addLog.forEach((l, index) => {
-                const sprite = createTextSprite((index + 1).toString());
-                sprite.position.set(...l.cam.p);
-                sprite.position.y += 2.0; 
-                seqTextGroup.add(sprite);
+                const sprite = createTextSprite((index + 1).toString()); sprite.position.set(...l.cam.p); sprite.position.y += 2.0; seqTextGroup.add(sprite);
             });
-
             const camLogs = logs.filter(l => l.a === 'camera_move');
-            const thresholdTime = 1000; 
-            const thresholdDist = 1.0; 
-            
+            const thresholdTime = 1000; const thresholdDist = 1.0; 
             for(let i=0; i<camLogs.length-1; i++) {
-                const curr = camLogs[i];
-                const next = camLogs[i+1];
-                const dt = next.t - curr.t;
-                
+                const curr = camLogs[i]; const next = camLogs[i+1]; const dt = next.t - curr.t;
                 if (dt > thresholdTime) {
-                    const p1 = new THREE.Vector3(...curr.cam.p);
-                    const p2 = new THREE.Vector3(...next.cam.p);
+                    const p1 = new THREE.Vector3(...curr.cam.p); const p2 = new THREE.Vector3(...next.cam.p);
                     if (p1.distanceTo(p2) < thresholdDist) {
                         const size = Math.min(dt / 2000, 3.0); 
-                        const sphere = new THREE.Mesh(
-                            new THREE.SphereGeometry(size, 8, 8),
-                            new THREE.MeshBasicMaterial({ color: 0x00ffff, transparent: true, opacity: 0.4 })
-                        );
-                        sphere.position.copy(p1);
-                        gazeSpheresGroup.add(sphere);
+                        const sphere = new THREE.Mesh(new THREE.SphereGeometry(size, 8, 8), new THREE.MeshBasicMaterial({ color: 0x00ffff, transparent: true, opacity: 0.4 }));
+                        sphere.position.copy(p1); gazeSpheresGroup.add(sphere);
                     }
                 }
             }
-            scene.add(seqTextGroup);
-            scene.add(gazeSpheresGroup);
+            scene.add(seqTextGroup); scene.add(gazeSpheresGroup);
         }
 
-        function recolorMesh(mode) {
-            if (!currentMesh) return;
-            const colorAttr = currentMesh.geometry.attributes.color;
-            const count = colorAttr.count;
-            const faceCount = count / 3;
-            const legend = document.getElementById('legend-stage');
-            legend.style.display = (mode === 'stage') ? 'flex' : 'none';
+        // ==========================================
+        // 10. Init 执行点与主渲染循环
+        // ==========================================
+        window.addEventListener('DOMContentLoaded', () => {
+            init();
+            animate();
+        });
 
-            for (let f = 0; f < faceCount; f++) {
-                if (annotationData[f] && annotationData[f].marked) {
-                    const data = annotationData[f];
-                    let r = 1, g = 0, b = 0; 
-                    if (mode === 'stage') {
-                        if (data.createdInStage === 1) { r=0; g=0; b=1; }
-                        else if (data.createdInStage === 2) { r=0; g=1; b=0; }
-                        else { r=1; g=0; b=0; }
-                    } 
-                    else if (mode === 'confidence') {
-                        const t = data.confidence / 100;
-                        r = 1.0; g = 1.0 - t; b = 0;
-                    }
-                    else if (mode === 'hesitation') {
-                         const t = Math.min(data.decisionTime / 3000, 1.0);
-                         r = t * 0.5; g = 1-t; b = 1-t * 0.5;
-                    }
-                    for(let k=0; k<3; k++) colorAttr.setXYZ(f*3+k, r, g, b);
-                } else {
-                    for(let k=0; k<3; k++) colorAttr.setXYZ(f*3+k, 0.8, 0.8, 0.8);
-                }
-            }
-            colorAttr.needsUpdate = true;
-        }
+        function init() {
+            const container = document.getElementById('canvas-container');
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x222222);
+            scene.add(new THREE.AxesHelper(50));
 
-        // --- Experiment Logic ---
+            // Camera is calibrated for normalized model sizes (max width = 40)
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 5000); 
+            camera.position.set(40, 40, 40);
 
-        function startExperimentCheck() {
-            const userIdInput = document.getElementById('user-id-input');
-            if (userIdInput.value.trim() === "") { alert("请输入参与者 ID！"); return; }
-            if (currentMesh) startExperiment();
-            else document.getElementById('init-file-input').click();
-        }
-
-        function handleInitFileUpload(event) {
-            const userIdInput = document.getElementById('user-id-input');
-            if (userIdInput.value.trim() === "") {
-                alert("请先输入参与者 ID！"); event.target.value = ''; return;
-            }
-            autoStartExperiment = true; handleFileUpload(event); 
-        }
-
-        function loadDemoAndStart() {
-            const userIdInput = document.getElementById('user-id-input');
-            if (userIdInput.value.trim() === "") { alert("请输入参与者 ID！"); return; }
-            autoStartExperiment = true; generateComplexBuilding(true); 
-        }
-
-        function startExperiment() {
-            const userIdInput = document.getElementById('user-id-input');
-            experimentConfig.userId = userIdInput.value.trim();
-            experimentConfig.startTime = new Date().toISOString();
-            experimentConfig.logs = []; 
-            document.getElementById('login-overlay').style.display = 'none';
-            document.getElementById('ui-layer').style.display = 'block';
-            document.getElementById('bottom-bar').style.display = 'flex';
-            setStage(1);
-            logInteraction('experiment_start', { model: 'loaded_model' });
-        }
-
-        function setStage(stageNum) {
-            experimentConfig.currentStage = stageNum;
-            document.querySelectorAll('.stage-step').forEach(el => el.classList.remove('active'));
-            document.getElementById(`step-${stageNum}`).classList.add('active');
+            renderer = new THREE.WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true }); 
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.outputColorSpace = THREE.SRGBColorSpace;
+            container.appendChild(renderer.domElement);
             
-            const stageTitle = document.getElementById('stage-title');
-            const stageDesc = document.getElementById('stage-desc');
-            const nextStageBtn = document.getElementById('next-stage-btn');
-            const exportBtn = document.getElementById('export-btn');
+            // Lighting Setup
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.8); scene.add(ambientLight);
+            scene.add(camera); 
+            const camLight = new THREE.DirectionalLight(0xffffff, 1.8); camLight.position.set(0, 0, 1); camera.add(camLight);
+            const fillLights = [{ pos: [50, 100, 50], intensity: 1.5 }, { pos: [-50, 20, -50], intensity: 1.0 }, { pos: [0, -50, 0], intensity: 1.2 }, { pos: [-50, 50, 50], intensity: 0.8 }];
+            fillLights.forEach(cfg => { const light = new THREE.DirectionalLight(0xffffff, cfg.intensity); light.position.set(...cfg.pos); scene.add(light); });
+            const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.0); hemiLight.position.set(0, 200, 0); scene.add(hemiLight);
 
-            if (stageNum === 1) {
-                stageTitle.innerText = "阶段 1: 纯几何观察"; stageDesc.innerText = "请仅根据几何结构（白模）标记模型缺陷。忽略纹理信息。"; forceDisplayMode(2); 
-            } else if (stageNum === 2) {
-                stageTitle.innerText = "阶段 2: 纹理观察"; stageDesc.innerText = "模型已切换为纯纹理模式。请检查是否有纹理拉伸、模糊或错位。"; forceDisplayMode(0); 
-            } else if (stageNum === 3) {
-                stageTitle.innerText = "阶段 3: 综合校验"; stageDesc.innerText = "叠加几何线框。请综合判断并修正之前的标记。"; forceDisplayMode(1); 
-                nextStageBtn.innerText = "🏁 完成实验并分析"; 
-            }
-            logInteraction('stage_change', { stage: stageNum });
-            updateUIStats();
-        }
+            // Controls
+            orbitControls = new OrbitControls(camera, renderer.domElement);
+            orbitControls.enableDamping = true;
+            orbitControls.dampingFactor = 0.05;
+            orbitControls.screenSpacePanning = true; 
+            orbitControls.addEventListener('change', () => logInteraction('camera_move'));
+            orbitControls.enabled = false;
 
-        function advanceStage() {
-            if (experimentConfig.currentStage < 3) {
-                setStage(experimentConfig.currentStage + 1);
-            } else {
-                finishExperiment();
-            }
-        }
+            arcballControls = new ArcballControls(camera, renderer.domElement, scene);
+            arcballControls.setGizmosVisible(false); 
+            arcballControls.addEventListener('change', () => logInteraction('camera_move'));
+            arcballControls.enabled = true; 
+            currentControls = arcballControls; 
 
-        function forceDisplayMode(mode) {
-            if (!currentMesh) return;
-            displayMode = mode;
-            const materials = Array.isArray(currentMesh.material) ? currentMesh.material : [currentMesh.material];
-            const wireMesh = currentMesh.children.find(c => c.isMesh && c.material.wireframe);
-            const hasBackup = materials.some(m => !!m.userData.originalMap);
-            if (!hasBackup && mode !== 2) { displayMode = 2; mode = 2; }
-            switch (mode) {
-                case 0: materials.forEach(m => { if(!m) return; if (m.userData.originalMap) { m.map = m.userData.originalMap; m.needsUpdate = true; } }); if (wireMesh) wireMesh.material.opacity = 0.01; refreshColors(true); break;
-                case 1: materials.forEach(m => { if(!m) return; if (m.userData.originalMap) { m.map = m.userData.originalMap; m.needsUpdate = true; } }); if (wireMesh) wireMesh.material.opacity = 0.2; refreshColors(true); break;
-                case 2: materials.forEach(m => { if(!m) return; if (m.map) m.userData.originalMap = m.map; m.map = null; m.needsUpdate = true; }); if (wireMesh) wireMesh.material.opacity = 0.15; refreshColors(false); break;
-            }
-        }
+            raycaster = new THREE.Raycaster();
+            mouse = new THREE.Vector2();
 
-        // --- Tool & Logic ---
-        function setTool(toolName) {
-            currentTool = toolName;
-            const toolBtns = { point: document.getElementById('tool-point'), brush: document.getElementById('tool-brush'), wand: document.getElementById('tool-wand') };
-            Object.keys(toolBtns).forEach(key => {
-                if (key === toolName) toolBtns[key].classList.add('active'); else toolBtns[key].classList.remove('active');
-            });
-            document.getElementById('param-brush').style.display = (toolName === 'brush') ? 'flex' : 'none';
-            document.getElementById('param-wand').style.display = (toolName === 'wand') ? 'flex' : 'none';
-            const brushCursor = document.getElementById('brush-cursor');
-            if (toolName === 'brush') { brushCursor.style.display = 'block'; document.body.style.cursor = 'none'; } else { brushCursor.style.display = 'none'; document.body.style.cursor = 'default'; }
-        }
+            window.addEventListener('resize', onWindowResize);
+            window.addEventListener('mousedown', onMouseDown); 
+            window.addEventListener('mouseup', onMouseUp); 
+            window.addEventListener('mousemove', onMouseMove);
+            window.addEventListener('click', onMouseClick);
+            window.addEventListener('dblclick', onDoubleClick); 
+            window.addEventListener('keydown', onKeyDown);
+            window.addEventListener('keyup', onKeyUp);
 
-        function buildAdjacencyGraph(geometry) {
-            const posAttr = geometry.attributes.position;
-            const count = posAttr.count;
-            const faceCount = count / 3;
-            const vHashToFaces = new Map();
-            const precision = 1000; 
-            for (let f = 0; f < faceCount; f++) {
-                for (let k = 0; k < 3; k++) {
-                    const idx = f * 3 + k;
-                    const x = Math.round(posAttr.getX(idx) * precision); const y = Math.round(posAttr.getY(idx) * precision); const z = Math.round(posAttr.getZ(idx) * precision);
-                    const key = `${x},${y},${z}`;
-                    if (!vHashToFaces.has(key)) vHashToFaces.set(key, []);
-                    vHashToFaces.get(key).push(f);
-                }
-            }
-            adjacencyMap = new Array(faceCount);
-            for (let f = 0; f < faceCount; f++) {
-                const neighbors = new Set();
-                for (let k = 0; k < 3; k++) {
-                    const idx = f * 3 + k;
-                    const x = Math.round(posAttr.getX(idx) * precision); const y = Math.round(posAttr.getY(idx) * precision); const z = Math.round(posAttr.getZ(idx) * precision);
-                    const key = `${x},${y},${z}`;
-                    const sharingFaces = vHashToFaces.get(key);
-                    for (let sf of sharingFaces) { if (sf !== f) neighbors.add(sf); }
-                }
-                adjacencyMap[f] = Array.from(neighbors);
-            }
-        }
-
-        function magicWandSelect(startFaceIndex, isDeletion = false) {
-            if (!adjacencyMap) { alert("正在构建拓扑结构..."); return; }
-            const visited = new Set();
-            const queue = [startFaceIndex];
-            const selectedFaces = [];
-            visited.add(startFaceIndex);
+            // UI Bindings
+            safeBind('start-experiment-btn', 'click', startExperimentCheck);
+            safeBind('demo-model-btn', 'click', loadDemoAndStart);
+            safeBind('init-file-input', 'change', handleInitFileUpload);
+            safeBind('file-input', 'change', handleFileUpload);
+            safeBind('next-stage-btn', 'click', advanceStage);
+            safeBind('undo-btn', 'click', performUndo);
+            safeBind('export-obj-btn', 'click', exportOBJ);
+            safeBind('export-json-btn', 'click', exportData);
+            safeBind('export-json-btn-report', 'click', exportData);
+            safeBind('toggle-ctrl-btn', 'click', toggleControlMode); 
+            safeBind('toggle-mode-btn', 'click', toggleDisplayMode);
+            safeBind('toggle-opacity-btn', 'click', toggleOpacityMode);
+            safeBind('toggle-bg-btn', 'click', toggleBackground);
             
-            const normalAttr = currentMesh.geometry.attributes.normal;
-            const getFaceNormal = (fIdx) => new THREE.Vector3().fromBufferAttribute(normalAttr, fIdx * 3);
-            const startNormal = getFaceNormal(startFaceIndex);
-            const thresholdDot = Math.cos(THREE.MathUtils.degToRad(wandAngleThreshold));
+            // View Presets
+            const views = ['top','bottom','front','back','left','right'];
+            views.forEach(v => safeBind(`view-${v}`, 'click', () => setView(v)));
             
-            while(queue.length > 0) {
-                const currentF = queue.shift();
-                selectedFaces.push(currentF);
-                const neighbors = adjacencyMap[currentF];
-                if (!neighbors) continue;
-                for (let neighbor of neighbors) {
-                    if (!visited.has(neighbor)) {
-                        const neighborNormal = getFaceNormal(neighbor);
-                        if (startNormal.dot(neighborNormal) >= thresholdDot) {
-                            visited.add(neighbor); queue.push(neighbor);
-                        }
-                    }
-                }
-            }
-            batchMarkFaces(selectedFaces, isDeletion);
-            const focusMsg = document.getElementById('focus-msg');
-            focusMsg.innerText = isDeletion ? `🧹 消除 ${selectedFaces.length} 个面片` : `🪄 选中 ${selectedFaces.length} 个面片`;
-            focusMsg.style.opacity = 1; setTimeout(() => focusMsg.style.opacity = 0, 1500);
-        }
-
-        function brushSelect(centerPoint, isDeletion = false) {
-            const posAttr = currentMesh.geometry.attributes.position;
-            const faceCount = posAttr.count / 3;
-            const rSq = brushRadius * brushRadius;
-            const selectedFaces = [];
-            const p1 = new THREE.Vector3(), p2 = new THREE.Vector3(), p3 = new THREE.Vector3(), center = new THREE.Vector3();
-            const localPoint = centerPoint.clone().applyMatrix4(currentMesh.matrixWorld.clone().invert());
-
-            for (let f = 0; f < faceCount; f++) {
-                p1.fromBufferAttribute(posAttr, f*3); p2.fromBufferAttribute(posAttr, f*3+1); p3.fromBufferAttribute(posAttr, f*3+2);
-                center.addVectors(p1, p2).add(p3).divideScalar(3);
-                if (center.distanceToSquared(localPoint) <= rSq) selectedFaces.push(f);
-            }
-            batchMarkFaces(selectedFaces, isDeletion);
-        }
-
-        function batchMarkFaces(faceIndices, isDeletion = false) {
-            const confidence = parseInt(document.getElementById('confidence-slider').value);
-            const intensity = 0.5 + (confidence / 200);
-            const colorAttr = currentMesh.geometry.attributes.color;
-            const posAttr = currentMesh.geometry.attributes.position;
-            const normalAttr = currentMesh.geometry.attributes.normal;
-            const actionChanges = []; 
-            const stage = experimentConfig.currentStage;
-            const isTexture = displayMode !== 2;
-            const baseVal = isTexture ? 1.0 : 0.66;
-            const pA = new THREE.Vector3(), pB = new THREE.Vector3(), pC = new THREE.Vector3();
-            const center = new THREE.Vector3(), normal = new THREE.Vector3(), viewDir = new THREE.Vector3();
-
-            faceIndices.forEach(fIdx => {
-                if (isDeletion) {
-                    if (annotationData[fIdx]) {
-                        actionChanges.push({ faceIndex: fIdx, oldState: {...annotationData[fIdx]} });
-                        delete annotationData[fIdx];
-                        for(let i=0; i<3; i++) colorAttr.setXYZ(fIdx*3+i, baseVal, baseVal, baseVal);
-                    }
-                } else {
-                    if (!annotationData[fIdx] || !annotationData[fIdx].marked) {
-                        actionChanges.push({ faceIndex: fIdx, oldState: null });
-                        
-                        pA.fromBufferAttribute(posAttr, fIdx*3); pB.fromBufferAttribute(posAttr, fIdx*3+1); pC.fromBufferAttribute(posAttr, fIdx*3+2);
-                        center.addVectors(pA, pB).add(pC).divideScalar(3); center.applyMatrix4(currentMesh.matrixWorld);
-                        const distToCam = camera.position.distanceTo(center);
-                        const screenPos = center.clone().project(camera);
-                        const screenDist = new THREE.Vector2(screenPos.x, screenPos.y).length();
-                        normal.fromBufferAttribute(normalAttr, fIdx*3);
-                        normal.applyMatrix3(new THREE.Matrix3().getNormalMatrix(currentMesh.matrixWorld)).normalize();
-                        viewDir.subVectors(camera.position, center).normalize();
-                        const dot = normal.dot(viewDir);
-
-                        annotationData[fIdx] = {
-                            marked: true, createdInStage: stage, confidence: confidence, timestamp: Date.now(), decisionTime: Date.now() - hoverStartTime,
-                            viewAngle: dot.toFixed(3), cameraDist: distToCam.toFixed(3), screenCentricity: screenDist.toFixed(3)
-                        };
-                        for(let i=0; i<3; i++) colorAttr.setXYZ(fIdx*3+i, 1 * intensity, 0.2, 0.2); 
-                    }
-                }
-            });
-
-            if (actionChanges.length > 0) {
-                undoStack.push(actionChanges);
-                logInteraction(isDeletion ? 'mark_delete' : 'mark_add', { count: faceIndices.length, tool: currentTool });
-                document.getElementById('undo-btn').disabled = false;
-                colorAttr.needsUpdate = true;
-                updateUIStats();
-            }
-        }
-
-        // --- Interaction ---
-        function onMouseDown(event) {
-            mouseDownPosition.set(event.clientX, event.clientY);
-            if (currentTool !== 'point' && currentMesh) {
-                mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-                mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-                raycaster.setFromCamera(mouse, camera);
-                const intersects = raycaster.intersectObject(currentMesh);
-                if (intersects.length > 0) {
-                    isInteractWithModel = true;
-                    currentControls.enabled = false; 
-                    if (currentTool === 'brush') brushSelect(intersects[0].point, event.shiftKey);
-                } else { isInteractWithModel = false; }
-            }
-        }
-
-        function onMouseUp(event) {
-            currentControls.enabled = true; 
-            isInteractWithModel = false;
-        }
-
-        function onMouseMove(event) {
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-            const brushCursor = document.getElementById('brush-cursor');
-            const cursorFeedback = document.getElementById('cursor-feedback');
-
-            if (currentTool === 'brush') {
-                brushCursor.style.left = event.clientX + 'px';
-                brushCursor.style.top = event.clientY + 'px';
-                const scale = 50 * brushRadius / camera.position.distanceTo(new THREE.Vector3(0,0,0)) * 10;
-                brushCursor.style.width = Math.max(20, scale) + 'px'; brushCursor.style.height = Math.max(20, scale) + 'px';
-                if (event.shiftKey) { brushCursor.style.borderColor = "white"; brushCursor.style.backgroundColor = "rgba(255, 255, 255, 0.2)"; } 
-                else { brushCursor.style.borderColor = "rgba(0, 210, 255, 0.8)"; brushCursor.style.backgroundColor = "rgba(0, 210, 255, 0.1)"; }
-            } else { cursorFeedback.style.left = event.clientX + 15 + 'px'; cursorFeedback.style.top = event.clientY + 15 + 'px'; }
-
-            if (!currentMesh) return;
-            if (isInteractWithModel && event.buttons === 1) {
-                if (currentTool === 'brush') {
-                    raycaster.setFromCamera(mouse, camera);
-                    const intersects = raycaster.intersectObject(currentMesh);
-                    if (intersects.length > 0) brushSelect(intersects[0].point, event.shiftKey);
-                }
-                return; 
-            }
-            if (!isInteractWithModel) {
-                raycaster.setFromCamera(mouse, camera);
-                const intersects = raycaster.intersectObject(currentMesh);
-                if (intersects.length > 0) {
-                    const intersect = intersects[0];
-                    const faceIndex = intersect.faceIndex;
-                    if (faceIndex !== hoveredFaceIndex) {
-                        if (hoveredFaceIndex !== -1 && currentTool === 'point') highlightFace(hoveredFaceIndex, false);
-                        hoveredFaceIndex = faceIndex;
-                        hoverStartTime = Date.now();
-                        if (currentTool === 'point') { cursorFeedback.style.display = 'block'; cursorFeedback.innerText = "Face: " + faceIndex; highlightFace(faceIndex, true); }
-                    }
-                    if (currentTool === 'point' && event.buttons === 1 && event.ctrlKey) batchMarkFaces([faceIndex], event.shiftKey);
-                } else {
-                    if (hoveredFaceIndex !== -1 && currentTool === 'point') highlightFace(hoveredFaceIndex, false);
-                    hoveredFaceIndex = -1;
-                    cursorFeedback.style.display = 'none';
-                }
-            }
-        }
-
-        function onMouseClick(event) {
-            if (hoveredFaceIndex === -1 || !currentMesh) return;
-            if (event.target.closest('#ui-layer') || event.target.closest('#bottom-bar') || event.target.closest('#analysis-panel')) return;
-            const moveDist = Math.abs(event.clientX - mouseDownPosition.x) + Math.abs(event.clientY - mouseDownPosition.y);
-            if (moveDist > 5) return;
-            if (currentTool === 'point') batchMarkFaces([hoveredFaceIndex], event.shiftKey);
-            else if (currentTool === 'wand') magicWandSelect(hoveredFaceIndex, event.shiftKey);
-        }
-
-        function highlightFace(idx, show) {
-            if (annotationData[idx]) return; 
-            const attr = currentMesh.geometry.attributes.color;
-            const r = show ? 0 : (displayMode===2 ? 0.66 : 1.0); 
-            const g = show ? 0.8 : (displayMode===2 ? 0.66 : 1.0);
-            const b = show ? 1 : (displayMode===2 ? 0.66 : 1.0);
-            for(let i=0; i<3; i++) attr.setXYZ(idx*3+i, r, g, b);
-            attr.needsUpdate = true;
-        }
-
-        // --- Other Funcs ---
-        function performUndo() {
-            if (undoStack.length === 0) return;
-            const lastAction = undoStack.pop();
-            const colorAttr = currentMesh.geometry.attributes.color;
-            const isTexture = displayMode !== 2;
-            const baseVal = isTexture ? 1.0 : 0.66; 
-            lastAction.forEach(change => {
-                const fIdx = change.faceIndex;
-                if (change.oldState === null) {
-                    delete annotationData[fIdx];
-                    for(let i=0; i<3; i++) colorAttr.setXYZ(fIdx*3+i, baseVal, baseVal, baseVal);
-                } else {
-                    annotationData[fIdx] = change.oldState;
-                    const conf = change.oldState.confidence;
-                    const intensity = 0.5 + (conf / 200);
-                    for(let i=0; i<3; i++) colorAttr.setXYZ(fIdx*3+i, 1 * intensity, 0.2, 0.2);
-                }
-            });
-            logInteraction('undo');
-            colorAttr.needsUpdate = true;
-            updateUIStats();
-            document.getElementById('undo-btn').disabled = undoStack.length === 0;
-        }
-
-        function toggleBackground() {
-            if (!scene) return;
-            isDarkBackground = !isDarkBackground;
-            scene.background = new THREE.Color(isDarkBackground ? 0x222222 : 0xffffff);
-            const btn = document.getElementById('toggle-bg-btn');
-            if (btn) btn.innerText = isDarkBackground ? "🎨 背景: 深色" : "🎨 背景: 浅色";
-        }
-
-        function refreshColors(isTextureMode) {
-            if (!currentMesh) return;
-            const colorAttr = currentMesh.geometry.attributes.color;
-            const count = colorAttr.count;
-            const faceCount = count / 3;
-            const baseVal = (isTextureMode === true) ? 1.0 : 0.66;
-            for (let f = 0; f < faceCount; f++) {
-                if (annotationData[f] && annotationData[f].marked) {
-                    const data = annotationData[f];
-                    const t = data.confidence / 100;
-                    const intensity = 0.5 + (t / 2.0); 
-                    for(let k=0; k<3; k++) colorAttr.setXYZ(f*3+k, 1 * intensity, 0.2, 0.2);
-                } else {
-                    for(let k=0; k<3; k++) colorAttr.setXYZ(f*3+k, baseVal, baseVal, baseVal);
-                }
-            }
-            colorAttr.needsUpdate = true;
-        }
-
-        function toggleControlMode() {
-            const toggleCtrlBtn = document.getElementById('toggle-ctrl-btn');
-            const focusMsg = document.getElementById('focus-msg');
-            if (currentControls === orbitControls) {
-                orbitControls.enabled = false;
-                arcballControls.enabled = true;
-                arcballControls.target.copy(orbitControls.target); 
-                arcballControls.update(); 
-                currentControls = arcballControls;
-                toggleCtrlBtn.innerText = "🕹️ 视角：自由 (3轴)";
-                focusMsg.innerText = "🔄 进入3轴自由旋转模式";
-                focusMsg.style.opacity = 1; setTimeout(() => { focusMsg.style.opacity = 0; focusMsg.innerText = "🎯 视角已聚焦"; }, 1500);
-            } else {
-                arcballControls.enabled = false;
-                orbitControls.enabled = true;
-                orbitControls.target.copy(arcballControls.target); 
-                camera.up.set(0, 1, 0);
-                orbitControls.update();
-                currentControls = orbitControls;
-                toggleCtrlBtn.innerText = "🕹️ 视角：建筑 (2轴)";
-            }
-        }
-
-        function toggleOpacityMode() {
-            if (!currentMesh) return;
-            const materials = Array.isArray(currentMesh.material) ? currentMesh.material : [currentMesh.material];
-            const isTransparent = materials[0].transparent;
-            const newState = !isTransparent;
-            materials.forEach(m => { m.transparent = newState; m.opacity = newState ? 0.5 : 1.0; m.needsUpdate = true; });
-            document.getElementById('toggle-opacity-btn').innerText = newState ? "💧 半透明: 开" : "💧 半透明: 关";
-        }
-
-        function toggleDisplayMode() {
-            if (!currentMesh) return;
-            displayMode = (displayMode + 1) % 3;
-            forceDisplayMode(displayMode);
-            const modeNames = ["纯纹理", "纹理+网格", "纯网格"];
-            document.getElementById('toggle-mode-btn').innerText = "👁️ 显示：" + modeNames[displayMode];
-        }
-
-        function onDoubleClick(event) {
-            if (hoveredFaceIndex === -1 || !currentMesh) return;
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObject(currentMesh);
-            if (intersects.length > 0) {
-                const targetPoint = intersects[0].point;
-                const faceNormal = intersects[0].face.normal.clone().transformDirection(currentMesh.matrixWorld).normalize();
-                const distance = camera.position.distanceTo(targetPoint);
-                const newCamPos = targetPoint.clone().add(faceNormal.multiplyScalar(distance * 0.5)); 
-                animateFocus(targetPoint, newCamPos, new THREE.Vector3(0, 1, 0)); // Use default up
-                const focusMsg = document.getElementById('focus-msg');
-                focusMsg.style.opacity = 1; setTimeout(() => focusMsg.style.opacity = 0, 1500);
-            }
-        }
-
-        function animateFocus(targetPos, camPos, upVec = null) {
-            focusTargetPos.copy(targetPos);
-            focusCameraPos.copy(camPos);
-            if(upVec) focusCameraUp = upVec; // Use provided up vector
-            else focusCameraUp.copy(camera.up);
-            isFocusing = true;
-        }
-
-        function handleFileUpload(event) {
-            const files = event.target.files;
-            if (!files || files.length === 0) return;
-            const loadingOverlay = document.getElementById('loading-overlay');
-            loadingOverlay.style.display = 'flex';
-            document.getElementById('toggle-opacity-btn').innerText = "💧 半透明: 关";
-            undoStack = []; updateUndoButton();
-            objectURLs.forEach(url => URL.revokeObjectURL(url)); objectURLs = [];
-            const fileMap = new Map();
-            let objFile = null, mtlFile = null, glbFile = null;
-            for(let i=0; i<files.length; i++) {
-                const file = files[i]; const url = URL.createObjectURL(file); objectURLs.push(url); fileMap.set(file.name, url);
-                const lower = file.name.toLowerCase();
-                if (lower.endsWith('.obj')) objFile = file.name; if (lower.endsWith('.mtl')) mtlFile = file.name; if (lower.endsWith('.glb') || lower.endsWith('.gltf')) glbFile = file.name;
-            }
-            const manager = new THREE.LoadingManager();
-            manager.setURLModifier((url) => { const n = url.split('/').pop().split('\\').pop(); return fileMap.has(n) ? fileMap.get(n) : url; });
-            if (glbFile) {
-                const loader = new GLTFLoader(manager); const dracoLoader = new DRACOLoader(); dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/'); loader.setDRACOLoader(dracoLoader);
-                loader.load(fileMap.get(glbFile), (gltf) => handleLoadedObject(gltf.scene), undefined, err => { console.error(err); alert("GLB Error"); loadingOverlay.style.display='none'; });
-            } else if (objFile) {
-                const objLoader = new OBJLoader(manager); const onLoadObj = (object) => { handleLoadedObject(object); };
-                if (mtlFile) { new MTLLoader(manager).load(fileMap.get(mtlFile), mats => { mats.preload(); objLoader.setMaterials(mats); objLoader.load(fileMap.get(objFile), onLoadObj, undefined, err => { console.error(err); alert("OBJ Error"); loadingOverlay.style.display='none'; }); });
-                } else { objLoader.load(fileMap.get(objFile), handleLoadedObject, undefined, err => { console.error(err); alert("OBJ Error"); loadingOverlay.style.display='none'; }); }
-            } else { alert("未找到模型文件"); loadingOverlay.style.display='none'; }
-        }
-
-        function handleLoadedObject(object) {
-            const geometries = []; const materials = [];
-            object.updateMatrixWorld(true);
-            object.traverse((child) => {
-                if (child.isMesh) {
-                    const clonedGeo = child.geometry.clone();
-                    clonedGeo.applyMatrix4(child.matrixWorld);
-                    geometries.push(clonedGeo);
-                    if (child.material) { if (Array.isArray(child.material)) materials.push(...child.material); else materials.push(child.material); } else { materials.push(new THREE.MeshStandardMaterial({color: 0xcccccc})); }
-                }
-            });
-            if (geometries.length === 0) { alert("No mesh found"); document.getElementById('loading-overlay').style.display='none'; return; }
-            const mergedGeo = BufferGeometryUtils.mergeGeometries(geometries, true).toNonIndexed();
-            processGeometry(mergedGeo, materials);
-        }
-
-        function generateComplexBuilding(injectDefects = true) {
-            const loadingOverlay = document.getElementById('loading-overlay');
-            loadingOverlay.style.display = 'flex';
-            setTimeout(() => {
-                const geometries = []; const helper = new THREE.Object3D();
-                let currentY = 0; const baseWidth = 15; const baseDepth = 15; const segDensity = 1.2; 
-                const podiumHeight = 4; const podiumGeo = new THREE.BoxGeometry(baseWidth, podiumHeight, baseDepth, Math.ceil(baseWidth*segDensity), Math.ceil(podiumHeight*segDensity), Math.ceil(baseDepth*segDensity));
-                helper.position.set(0, currentY + podiumHeight/2, 0); helper.updateMatrixWorld(); podiumGeo.applyMatrix4(helper.matrixWorld); geometries.push(podiumGeo);
-                
-                let segments = 3; let currentWidth = baseWidth * 0.85; let currentDepth = baseDepth * 0.85;
-                for(let i=0; i<segments; i++) {
-                    const height = 8;
-                    let geo = new THREE.BoxGeometry(currentWidth, height, currentDepth, Math.ceil(currentWidth*segDensity), Math.ceil(height*segDensity), Math.ceil(currentDepth*segDensity));
-                    helper.position.set(0, currentY + height/2 + 2, 0); helper.updateMatrixWorld(); geo.applyMatrix4(helper.matrixWorld); geometries.push(geo);
-                    currentY += height; currentWidth *= 0.8; currentDepth *= 0.8;
-                }
-
-                let mergedGeo = BufferGeometryUtils.mergeGeometries(geometries, true).toNonIndexed(); 
-                // Noise
-                const posAttr = mergedGeo.attributes.position;
-                for(let i=0; i<posAttr.count; i++) {
-                    const y = posAttr.getY(i);
-                    // CHECK NaN
-                    if (!isNaN(y)) posAttr.setY(i, y + (Math.random()-0.5)*0.2);
-                }
-                mergedGeo.computeVertexNormals();
-                const materials = [new THREE.MeshStandardMaterial({vertexColors: true})];
-                processGeometry(mergedGeo, materials);
-                if (document.getElementById('login-overlay').style.display !== 'none') { /* Wait */ } else { startExperiment(); }
-                loadingOverlay.style.display = 'none';
-            }, 50);
-        }
-
-        function processGeometry(geometry, materials) {
-            if(currentMesh) { scene.remove(currentMesh); if(currentMesh.geometry) currentMesh.geometry.dispose(); currentMesh = null; }
-            if (geometry.index !== null) geometry = geometry.toNonIndexed();
+            safeBind('btn-show-analysis', 'click', finishExperiment);
+            safeBind('close-analysis', 'click', () => document.getElementById('analysis-overlay').style.display = 'none');
+            safeBind('gen-report-btn', 'click', generateReport); 
             
-            cleanGeometry(geometry); // Clean NaNs
+            // Viz Options
+            safeBind('viz-traj', 'change', (e) => { if(trajLines) trajLines.visible = e.target.checked; });
+            safeBind('viz-markers', 'change', (e) => { if(actionMarkersGroup) actionMarkersGroup.visible = e.target.checked; });
+            safeBind('viz-gaze', 'change', (e) => { if(gazeSpheresGroup) gazeSpheresGroup.visible = e.target.checked; });
+            safeBind('viz-seq', 'change', (e) => { if(seqTextGroup) seqTextGroup.visible = e.target.checked; });
+            safeBind('viz-mode-default', 'click', () => recolorMesh('default'));
+            safeBind('viz-mode-stage', 'click', () => recolorMesh('stage'));
+            safeBind('viz-mode-hesitation', 'click', () => recolorMesh('hesitation'));
+            safeBind('viz-mode-conf', 'click', () => recolorMesh('confidence'));
 
-            geometry.center(); geometry.computeVertexNormals(); geometry.computeBoundingBox();
-            buildAdjacencyGraph(geometry);
-            const size = new THREE.Vector3(); geometry.boundingBox.getSize(size);
-            const maxDim = Math.max(size.x, size.y, size.z);
-            let cameraZ = Math.abs(maxDim / 2 * Math.tan(camera.fov * Math.PI / 180 * 2)) * 1.3;
-            camera.position.set(cameraZ, cameraZ*0.5, cameraZ); camera.lookAt(0,0,0);
-            orbitControls.target.set(0,0,0); arcballControls.target.set(0,0,0); currentControls.update();
-            const matArray = Array.isArray(materials) ? materials : [materials];
-            matArray.forEach(m => { 
-                if(!m) return;
-                m.vertexColors = true; m.flatShading = false; m.side = THREE.DoubleSide; m.alphaTest = 0.5; if(m.map) { m.userData.originalMap = m.map; m.map.colorSpace = THREE.SRGBColorSpace; } 
-            });
+            document.getElementById('confidence-slider').addEventListener('input', (e) => { document.getElementById('conf-display').innerText = e.target.value + '%'; });
+
+            const toolBtns = ['point', 'brush', 'wand'];
+            toolBtns.forEach(t => { document.getElementById(`tool-${t}`).addEventListener('click', () => setTool(t)); });
             
-            const count = geometry.attributes.position.count;
-            const colors = []; for(let i=0; i<count; i++) colors.push(0.66, 0.66, 0.66);
-            geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-            originalColorAttribute = geometry.attributes.color.clone(); 
-            currentMesh = new THREE.Mesh(geometry, matArray);
-            const wireMat = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true, transparent: true, opacity: 0.03 });
-            const wireMesh = new THREE.Mesh(geometry, wireMat);
-            currentMesh.add(wireMesh);
-            scene.add(currentMesh);
-            annotationData = {}; undoStack = []; updateUndoButton(); updateUIStats();
-            if (autoStartExperiment) { startExperiment(); autoStartExperiment = false; } else if (experimentConfig.currentStage === 1) { forceDisplayMode(2); }
-            document.getElementById('loading-overlay').style.display='none';
+            document.getElementById('brush-size').addEventListener('input', (e) => { brushRadius = parseFloat(e.target.value); document.getElementById('brush-size-val').innerText = brushRadius.toFixed(1); });
+            document.getElementById('wand-angle').addEventListener('input', (e) => { wandAngleThreshold = parseInt(e.target.value); });
         }
 
-        function exportData() {
-            const exportPayload = { meta: { userId: experimentConfig.userId, startTime: experimentConfig.startTime, endTime: new Date().toISOString(), totalStages: 3, logs: experimentConfig.logs }, annotations: annotationData };
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportPayload, null, 2));
-            const node = document.createElement('a'); node.setAttribute("href", dataStr); node.setAttribute("download", `experiment_data_${experimentConfig.userId}_${Date.now()}.json`);
-            document.body.appendChild(node); node.click(); node.remove();
-        }
-
-        function exportOBJ() {
-            if (!currentMesh) { alert("无模型导出"); return; }
-            const loadingOverlay = document.getElementById('loading-overlay'); loadingOverlay.style.display = 'flex';
-            setTimeout(() => {
-                const geo = currentMesh.geometry; const pos = geo.attributes.position; const col = geo.attributes.color;
-                const lines = ["# Export"];
-                for (let i = 0; i < pos.count; i++) lines.push(`v ${pos.getX(i)} ${pos.getY(i)} ${pos.getZ(i)} ${col.getX(i)} ${col.getY(i)} ${col.getZ(i)}`);
-                for (let i = 0; i < pos.count; i+=3) lines.push(`f ${i+1} ${i+2} ${i+3}`);
-                const blob = new Blob([lines.join('\n')], {type:'text/plain'});
-                const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = "model.obj";
-                link.click(); loadingOverlay.style.display = 'none';
-            }, 100);
-        }
-
-        function onWindowResize() { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); }
-        function onKeyDown(e) { if(e.key==='Control') { currentControls.enabled=false; if(currentTool==='point') document.body.style.cursor='crosshair'; } if((e.ctrlKey||e.metaKey)&&e.key==='z') performUndo(); }
-        function onKeyUp(e) { if(e.key==='Control') { currentControls.enabled=true; if(currentTool==='point') document.body.style.cursor='default'; } }
         function animate() { 
             requestAnimationFrame(animate); 
-            if(currentControls.enabled) currentControls.update(); 
+            if(currentControls && currentControls.enabled) currentControls.update(); 
             if(isFocusing) { 
                 camera.position.lerp(focusCameraPos, 0.05); 
                 currentControls.target.lerp(focusTargetPos, 0.05);
-                // Also interpolate Up vector for smooth Top/Bottom transition
-                if (focusCameraUp) camera.up.lerp(focusCameraUp, 0.05);
-                
+                if(focusCameraUp) camera.up.lerp(focusCameraUp, 0.05);
                 if(camera.position.distanceTo(focusCameraPos)<0.1) isFocusing=false; 
             } 
-            renderer.render(scene, camera); 
+            if(renderer && scene && camera) renderer.render(scene, camera); 
         }
-        function updateUIStats() { const keys = Object.keys(annotationData); document.getElementById('count-val').innerText = keys.length; const stage = experimentConfig.currentStage; const sCount = keys.filter(k => annotationData[k].createdInStage === stage).length; document.getElementById('stage-count-val').innerText = sCount; }
-        function updateUndoButton() { document.getElementById('undo-btn').disabled = undoStack.length === 0; }
+
     </script>
 </body>
 </html>
