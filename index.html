@@ -191,6 +191,7 @@
                 <button class="tool-btn" id="view-top">Top</button><button class="tool-btn" id="view-front">Front</button><button class="tool-btn" id="view-right">Right</button>
                 <button class="tool-btn" id="view-bottom">Bottom</button><button class="tool-btn" id="view-back">Back</button><button class="tool-btn" id="view-left">Left</button>
             </div>
+            <button class="action-btn outline" id="auto-rotate-btn" style="margin-top: 5px;">🔄 自动旋转一圈</button>
         </div>
         <div class="control-group">
             <p style="color:#00d2ff; font-weight:bold;">🛠️ 标注工具</p>
@@ -268,6 +269,7 @@
         let lastLogTime = 0; 
         let isInteractWithModel = false; 
         let isDarkBackground = true;
+        let isAutoRotating = false;
 
         let experimentConfig = { userId: "Anonymous", startTime: null, currentStage: 0, logs: [] };
         
@@ -804,7 +806,8 @@
                 orbitControls.enabled = false; arcballControls.enabled = true; arcballControls.target.copy(orbitControls.target); arcballControls.update(); currentControls = arcballControls; document.getElementById('toggle-ctrl-btn').innerText = "🕹️ 视角：自由 (3轴)"; 
                 const focusMsg = document.getElementById('focus-msg'); focusMsg.innerText = "🔄 进入3轴自由旋转模式"; focusMsg.style.opacity = 1; setTimeout(() => { focusMsg.style.opacity = 0; focusMsg.innerText = "🎯 视角已聚焦"; }, 1500);
             } else { 
-                arcballControls.enabled = false; orbitControls.enabled = true; orbitControls.target.copy(arcballControls.target); camera.up.set(0, 1, 0); orbitControls.update(); currentControls = orbitControls; document.getElementById('toggle-ctrl-btn').innerText = "🕹️ 视角：建筑 (2轴)"; 
+                // 修复：适配 Z-up 模型，确保在建筑模式下锁定 Z 轴向上，防止模型躺倒
+                arcballControls.enabled = false; orbitControls.enabled = true; orbitControls.target.copy(arcballControls.target); camera.up.set(0, 0, 1); orbitControls.update(); currentControls = orbitControls; document.getElementById('toggle-ctrl-btn').innerText = "🕹️ 视角：建筑 (2轴)"; 
             } 
         }
 
@@ -1022,12 +1025,36 @@
             safeBind('toggle-bg-btn', 'click', () => { isDarkBackground = !isDarkBackground; scene.background = new THREE.Color(isDarkBackground ? 0x222222 : 0xffffff); document.getElementById('toggle-bg-btn').innerText = isDarkBackground ? "🎨 背景: 深色" : "🎨 背景: 浅色"; });
             safeBind('gen-report-btn', 'click', generateReport); 
             
+            // 修复：完全按照 Z-up 坐标系重新映射快速视角
             ['top','bottom','front','back','left','right'].forEach(v => safeBind(`view-${v}`, 'click', () => { 
-                if (!currentMesh) return; const dist = 60; let pos = new THREE.Vector3(); let up = new THREE.Vector3(0, 1, 0); 
-                if(v=='top'){pos.set(0,dist,0);up.set(0,0,-1);} else if(v=='bottom'){pos.set(0,-dist,0);up.set(0,0,1);} else if(v=='front')pos.set(0,0,dist); else if(v=='back')pos.set(0,0,-dist); else if(v=='left')pos.set(-dist,0,0); else if(v=='right')pos.set(dist,0,0); 
-                animateFocus(new THREE.Vector3(0,0,0), pos, up); logInteraction('view_preset', {type:v}); 
+                if (!currentMesh) return; 
+                const dist = 60; 
+                let pos = new THREE.Vector3(); 
+                let up = new THREE.Vector3(0, 0, 1); // 侧面视角的默认向上方向为 Z 轴
+                
+                if(v=='top') { pos.set(0, 0, dist); up.set(0, 1, 0); }      // 顶面：从+Z轴往下看，Y轴朝上
+                else if(v=='bottom') { pos.set(0, 0, -dist); up.set(0, 1, 0); } // 底部：从-Z轴往上看，Y轴朝上
+                else if(v=='front') { pos.set(0, -dist, 0); }                   // 正面：从-Y轴看向原点
+                else if(v=='back') { pos.set(0, dist, 0); }                     // 背面：从+Y轴看向原点
+                else if(v=='left') { pos.set(-dist, 0, 0); }                    // 左侧：从-X轴看向原点
+                else if(v=='right') { pos.set(dist, 0, 0); }                    // 右侧：从+X轴看向原点
+                
+                animateFocus(new THREE.Vector3(0,0,0), pos, up); 
+                logInteraction('view_preset', {type:v}); 
             }));
             
+            safeBind('auto-rotate-btn', 'click', () => {
+                isAutoRotating = !isAutoRotating;
+                const btn = document.getElementById('auto-rotate-btn');
+                if (isAutoRotating) {
+                    btn.innerText = "⏹️ 停止旋转";
+                    btn.classList.add('active');
+                } else {
+                    btn.innerText = "🔄 自动旋转一圈";
+                    btn.classList.remove('active');
+                }
+            });
+
             safeBind('btn-show-analysis', 'click', () => { document.getElementById('analysis-overlay').style.display = 'block'; });
             safeBind('close-analysis', 'click', () => document.getElementById('analysis-overlay').style.display = 'none');
             
@@ -1070,7 +1097,27 @@
         function exportData() { const d="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify({meta:{userId:experimentConfig.userId, logs:experimentConfig.logs}, annotations:annotationData})); const a=document.createElement('a'); a.href=d; a.download="data.json"; a.click(); }
         function exportOBJ() { if(!currentMesh) return; const lines=['o Model']; const p=currentMesh.geometry.attributes.position; const c=currentMesh.geometry.attributes.color; for(let i=0;i<p.count;i++) lines.push(`v ${p.getX(i)} ${p.getY(i)} ${p.getZ(i)} ${c.getX(i)} ${c.getY(i)} ${c.getZ(i)}`); for(let i=0;i<p.count;i+=3) lines.push(`f ${i+1} ${i+2} ${i+3}`); const b=new Blob([lines.join('\n')],{type:'text/plain'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download="model.obj"; a.click(); }
 
-        function animate() { requestAnimationFrame(animate); if(currentControls && currentControls.enabled) currentControls.update(); if(isFocusing) { camera.position.lerp(focusCameraPos, 0.05); currentControls.target.lerp(focusTargetPos, 0.05); if(focusCameraUp) camera.up.lerp(focusCameraUp, 0.05); if(camera.position.distanceTo(focusCameraPos)<0.1) isFocusing=false; } if(renderer && scene && camera) renderer.render(scene, camera); }
+        function animate() { 
+            requestAnimationFrame(animate); 
+            if(currentControls && currentControls.enabled) currentControls.update(); 
+            if(isFocusing) { 
+                camera.position.lerp(focusCameraPos, 0.05); 
+                currentControls.target.lerp(focusTargetPos, 0.05); 
+                if(focusCameraUp) camera.up.lerp(focusCameraUp, 0.05); 
+                if(camera.position.distanceTo(focusCameraPos)<0.1) isFocusing=false; 
+            } 
+            if(isAutoRotating && currentMesh) {
+                // 平滑的绕 Z 轴旋转 (蓝轴)
+                const speed = 0.01;
+                const target = currentControls.target.clone();
+                const camOffset = camera.position.clone().sub(target);
+                // 修改旋转轴为 Z 轴 (0, 0, 1)
+                camOffset.applyAxisAngle(new THREE.Vector3(0, 0, 1), speed);
+                camera.position.copy(target).add(camOffset);
+                camera.lookAt(target);
+            }
+            if(renderer && scene && camera) renderer.render(scene, camera); 
+        }
 
     </script>
 </body>
