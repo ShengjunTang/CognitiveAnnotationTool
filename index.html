@@ -1116,7 +1116,37 @@
         }
 
         function exportData() { const d="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify({meta:{userId:experimentConfig.userId, logs:experimentConfig.logs}, annotations:annotationData})); const a=document.createElement('a'); a.href=d; a.download="data.json"; a.click(); }
-        function exportOBJ() { if(!currentMesh) return; const lines=['o Model']; const p=currentMesh.geometry.attributes.position; const c=currentMesh.geometry.attributes.color; for(let i=0;i<p.count;i++) lines.push(`v ${p.getX(i)} ${p.getY(i)} ${p.getZ(i)} ${c.getX(i)} ${c.getY(i)} ${c.getZ(i)}`); for(let i=0;i<p.count;i+=3) lines.push(`f ${i+1} ${i+2} ${i+3}`); const b=new Blob([lines.join('\n')],{type:'text/plain'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download="model.obj"; a.click(); }
+        
+        function exportOBJ() { 
+            if(!currentMesh) return; 
+            const lines=['o Model']; 
+            const p = currentMesh.geometry.attributes.position; 
+            const faceCount = p.count / 3;
+            
+            // 动态根据数据阶段生成顶点颜色，而不是依赖当前屏幕的显示状态
+            for(let f = 0; f < faceCount; f++) {
+                let r = 0.8, g = 0.8, b = 0.8; // 默认未标记区域为灰色
+                if (annotationData[f] && annotationData[f].marked) {
+                    const stage = annotationData[f].createdInStage;
+                    if (stage === 1) { r = 0.0; g = 0.0; b = 1.0; }      // Stage 1 标记: 蓝色
+                    else if (stage === 2) { r = 0.0; g = 1.0; b = 0.0; } // Stage 2 标记: 绿色
+                    else if (stage === 3) { r = 1.0; g = 0.0; b = 0.0; } // Stage 3 标记: 红色
+                }
+                // 每个面片有3个顶点，将颜色写入每一个顶点
+                for(let v = 0; v < 3; v++) {
+                    const idx = f * 3 + v;
+                    lines.push(`v ${p.getX(idx)} ${p.getY(idx)} ${p.getZ(idx)} ${r} ${g} ${b}`);
+                }
+            }
+            
+            for(let i=0; i<p.count; i+=3) lines.push(`f ${i+1} ${i+2} ${i+3}`); 
+            
+            const blob = new Blob([lines.join('\n')], {type:'text/plain'}); 
+            const a = document.createElement('a'); 
+            a.href = URL.createObjectURL(blob); 
+            a.download = "model_stages.obj"; 
+            a.click(); 
+        }
 
         function animate() { 
             requestAnimationFrame(animate); 
