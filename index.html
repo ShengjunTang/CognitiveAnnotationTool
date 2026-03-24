@@ -639,9 +639,15 @@
             g.computeBoundingBox();
             const sz = new THREE.Vector3(); g.boundingBox.getSize(sz); 
             const maxDim = Math.max(sz.x, sz.y, sz.z);
+            let scaleFactor = 1.0;
             if (maxDim > 0 && maxDim !== Infinity) {
-                const scaleFactor = 40.0 / maxDim; g.scale(scaleFactor, scaleFactor, scaleFactor);
+                scaleFactor = 40.0 / maxDim; 
+                g.scale(scaleFactor, scaleFactor, scaleFactor);
             }
+            
+            // 记录原始的中心点偏移与缩放比例，以便导出时进行 1:1 的无损坐标还原
+            g.userData.originalCenter = center;
+            g.userData.appliedScale = scaleFactor;
             
             g.computeBoundingBox(); buildAdjacencyGraph(g); 
             
@@ -1123,7 +1129,12 @@
             const p = currentMesh.geometry.attributes.position; 
             const faceCount = p.count / 3;
             
-            // 动态根据数据阶段生成顶点颜色，而不是依赖当前屏幕的显示状态
+            // 提取之前记录的变换参数，用于逆向恢复绝对坐标
+            const center = currentMesh.geometry.userData.originalCenter || new THREE.Vector3(0,0,0);
+            const scaleFactor = currentMesh.geometry.userData.appliedScale || 1.0;
+            const invScale = 1.0 / scaleFactor;
+            
+            // 动态根据数据阶段生成顶点颜色，并恢复原始绝对坐标
             for(let f = 0; f < faceCount; f++) {
                 let r = 0.8, g = 0.8, b = 0.8; // 默认未标记区域为灰色
                 if (annotationData[f] && annotationData[f].marked) {
@@ -1132,10 +1143,14 @@
                     else if (stage === 2) { r = 0.0; g = 1.0; b = 0.0; } // Stage 2 标记: 绿色
                     else if (stage === 3) { r = 1.0; g = 0.0; b = 0.0; } // Stage 3 标记: 红色
                 }
-                // 每个面片有3个顶点，将颜色写入每一个顶点
+                // 每个面片有3个顶点，将颜色写入每一个顶点，并做逆向坐标变换
                 for(let v = 0; v < 3; v++) {
                     const idx = f * 3 + v;
-                    lines.push(`v ${p.getX(idx)} ${p.getY(idx)} ${p.getZ(idx)} ${r} ${g} ${b}`);
+                    const origX = p.getX(idx) * invScale + center.x;
+                    const origY = p.getY(idx) * invScale + center.y;
+                    const origZ = p.getZ(idx) * invScale + center.z;
+                    // 保留6位小数，确保空间精度完全一致
+                    lines.push(`v ${origX.toFixed(6)} ${origY.toFixed(6)} ${origZ.toFixed(6)} ${r} ${g} ${b}`);
                 }
             }
             
